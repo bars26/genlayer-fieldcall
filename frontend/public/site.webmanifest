@@ -1,0 +1,10 @@
+{
+  "name": "FieldCall",
+  "short_name": "FieldCall",
+  "description": "Paid calls for wildlife sightings, checked on iNaturalist by GenLayer validators",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#EEF1E8",
+  "theme_color": "#EEF1E8",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

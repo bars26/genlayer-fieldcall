@@ -1,0 +1,934 @@
+{
+  "contract": "0x0F8709541c0ae378A2E1a1958032d7CaE3f269Dc",
+  "accounts": {
+    "sponsor": "0x1933F1EcF5334bB888745d4FD7868811fB2ad909",
+    "cofunder": "0xb36f3bc2057dAc01068d401C76D378539B9dC170",
+    "scout": "0x88141EF57C1e8aaB69E027DE9AB08e937f9bfD47",
+    "bystander": "0xd8D24FffA980041dAbAAa4c23fc330dAac79699C"
+  },
+  "calls": [
+    "call_0",
+    "call_1"
+  ],
+  "pots": {
+    "call_0": {
+      "collect_until": "2027-01-25",
+      "funded": "3000000000000000000",
+      "paid": "0",
+      "pot": "2500000000000000000",
+      "reserved": "500000000000000000",
+      "returned": "0",
+      "rewards_left": 5,
+      "state": "open"
+    },
+    "call_1": {
+      "collect_until": "2027-01-25",
+      "funded": "1000000000000000000",
+      "paid": "0",
+      "pot": "500000000000000000",
+      "reserved": "500000000000000000",
+      "returned": "0",
+      "rewards_left": 2,
+      "state": "open"
+    }
+  },
+  "sightings": {
+    "sighting_0": {
+      "observation": "397236824",
+      "call": "call_0",
+      "ruling": "ELIGIBLE",
+      "code": "eligible",
+      "outcome": "awaiting_wallet",
+      "state": "awaiting_wallet",
+      "why": "Observation 397236824 by simoncolenutt is Vespa velutina (research grade), seen on 2026-08-20 at Spring Place, Romsey, UK, inside United Kingdom. Validators looked at the photos and they show what the call asks for: The photo shows a hornet nest. simoncolenutt has not put a wallet address in their iNaturalist profile yet, so the reward is held for them.",
+      "facts": {
+        "accuracy_m": 2,
+        "annotations": [
+          "Evidence of Presence: Construction",
+          "Evidence of Presence: Organism"
+        ],
+        "call_place": "United Kingdom",
+        "call_taxon": "Vespa velutina",
+        "captive": false,
+        "condition": "The photo shows a hornet nest",
+        "gbif": "http://www.gbif.org/occurrence/6520319147",
+        "geoprivacy": "open",
+        "in_place": true,
+        "max_accuracy_m": 100,
+        "min_account_days": 30,
+        "observation_id": "397236824",
+        "observed_on": "2026-08-20",
+        "observer_id": "4831496",
+        "observer_login": "simoncolenutt",
+        "observer_since": "2021-08-06",
+        "per_observer": 2,
+        "photo_answer": "MEETS",
+        "photos": 4,
+        "place_guess": "Spring Place, Romsey, UK",
+        "quality": "research",
+        "taxon_common": "Yellow-legged Hornet",
+        "taxon_id": "119019",
+        "taxon_name": "Vespa velutina",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-10-27T23:14:15",
+          "code": "eligible",
+          "event": "submitted",
+          "evidence": "9d206bfdd65353b12d671ec2d5e774b660afaeb4f13c6f4a73970cfe13930d7c",
+          "ruling": "ELIGIBLE"
+        },
+        {
+          "at": "2026-10-27T23:16:05",
+          "before": "ELIGIBLE",
+          "by": "funder",
+          "code": "eligible",
+          "event": "contested",
+          "evidence": "5257978bcb702f657bc91fd432bdd497b311bc506d3e68b4341a5aef4421e48e",
+          "ruling": "ELIGIBLE"
+        },
+        {
+          "amount": "500000000000000000",
+          "at": "2026-10-27T23:30:34",
+          "event": "held",
+          "until": "2027-01-25"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "397b1cb36605eb05a5367821ca217f3de2e1648de4e834a1997490641dbcfd11",
+          "observation": "https://www.inaturalist.org/observations/397236824",
+          "packet_sha256": "9d206bfdd65353b12d671ec2d5e774b660afaeb4f13c6f4a73970cfe13930d7c",
+          "photos": [
+            {
+              "answer": "MEETS",
+              "sha256": "b3907fd637b91cbd3fa800123a9600569783e0f3355695a3755c6edd4881b310",
+              "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/728548251/medium.jpg"
+            }
+          ],
+          "profile": "https://www.inaturalist.org/people/simoncolenutt",
+          "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
+          "read_at": "2026-10-27T23:14:15",
+          "ruling": "ELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/397236824"
+        },
+        {
+          "facts_sha256": "397b1cb36605eb05a5367821ca217f3de2e1648de4e834a1997490641dbcfd11",
+          "observation": "https://www.inaturalist.org/observations/397236824",
+          "packet_sha256": "5257978bcb702f657bc91fd432bdd497b311bc506d3e68b4341a5aef4421e48e",
+          "photos": [
+            {
+              "answer": "MEETS",
+              "sha256": "b3907fd637b91cbd3fa800123a9600569783e0f3355695a3755c6edd4881b310",
+              "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/728548251/medium.jpg"
+            }
+          ],
+          "profile": "https://www.inaturalist.org/people/simoncolenutt",
+          "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
+          "read_at": "2026-10-27T23:16:05",
+          "ruling": "ELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/397236824"
+        }
+      ]
+    },
+    "sighting_1": {
+      "observation": "397236834",
+      "call": "call_0",
+      "ruling": "INELIGIBLE",
+      "code": "condition_not_met",
+      "outcome": "nothing_paid",
+      "state": "settled",
+      "why": "Validators looked at the photos of observation 397236834 and they do not show what the call asks for: The photo shows a hornet nest.",
+      "facts": {
+        "accuracy_m": 2,
+        "annotations": [],
+        "call_place": "United Kingdom",
+        "call_taxon": "Vespa velutina",
+        "captive": false,
+        "condition": "The photo shows a hornet nest",
+        "gbif": "http://www.gbif.org/occurrence/6519064393",
+        "geoprivacy": "open",
+        "in_place": true,
+        "max_accuracy_m": 100,
+        "min_account_days": 30,
+        "observation_id": "397236834",
+        "observed_on": "2026-08-20",
+        "observer_id": "4831496",
+        "observer_login": "simoncolenutt",
+        "observer_since": "2021-08-06",
+        "per_observer": 2,
+        "photo_answer": "NOT_MEETS",
+        "photos": 4,
+        "place_guess": "The Abbey, Romsey, UK",
+        "quality": "research",
+        "taxon_common": "Yellow-legged Hornet",
+        "taxon_id": "119019",
+        "taxon_name": "Vespa velutina",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-10-27T23:14:39",
+          "code": "condition_not_met",
+          "event": "submitted",
+          "evidence": "299e75cb604cf6c52bfdda901860fecb4a7f5a524d88b96e9c66b56022a1dd8a",
+          "ruling": "INELIGIBLE"
+        },
+        {
+          "at": "2026-10-27T23:16:57",
+          "event": "settled",
+          "outcome": "nothing_paid",
+          "ruling": "INELIGIBLE"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "26c5413b0547864c2c3f0ddd9f528258f85a4558bf78d57dda7e9eef0f9a8cde",
+          "observation": "https://www.inaturalist.org/observations/397236834",
+          "packet_sha256": "299e75cb604cf6c52bfdda901860fecb4a7f5a524d88b96e9c66b56022a1dd8a",
+          "photos": [
+            {
+              "answer": "NOT_MEETS",
+              "sha256": "0b3839d141f352e5c5b4eb88022737b873bfe96366c283065402711c6d611096",
+              "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/728548649/medium.jpg"
+            },
+            {
+              "answer": "NOT_MEETS",
+              "sha256": "1cbe3fc034c368049d8e9950c3029a260b2b145d07a3c26402be71e9dd86c003",
+              "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/728548741/medium.jpg"
+            },
+            {
+              "answer": "NOT_MEETS",
+              "sha256": "1defd1ef39ce02bb829ccd0435b21564d9ba34800c834e7bd3ce888745578c0e",
+              "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/728548754/medium.jpg"
+            }
+          ],
+          "profile": "https://www.inaturalist.org/people/simoncolenutt",
+          "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
+          "read_at": "2026-10-27T23:14:39",
+          "ruling": "INELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/397236834"
+        }
+      ]
+    },
+    "sighting_2": {
+      "observation": "411158753",
+      "call": "call_0",
+      "ruling": "INELIGIBLE",
+      "code": "wrong_taxon",
+      "outcome": "nothing_paid",
+      "state": "settled",
+      "why": "Observation 411158753 is identified as Vespa crabro, which is not Vespa velutina.",
+      "facts": {
+        "accuracy_m": 2,
+        "annotations": [
+          "Evidence of Presence: Organism",
+          "Life Stage: Adult",
+          "Sex: Male"
+        ],
+        "call_place": "United Kingdom",
+        "call_taxon": "Vespa velutina",
+        "captive": false,
+        "condition": "The photo shows a hornet nest",
+        "gbif": "",
+        "geoprivacy": "open",
+        "in_place": true,
+        "max_accuracy_m": 100,
+        "min_account_days": 30,
+        "observation_id": "411158753",
+        "observed_on": "2026-10-25",
+        "observer_id": "10569679",
+        "observer_login": "fergy53",
+        "observer_since": "2026-05-21",
+        "per_observer": 2,
+        "photos": 1,
+        "place_guess": "The Mill House, Liskeard, England, GB",
+        "quality": "research",
+        "taxon_common": "European Hornet",
+        "taxon_id": "54327",
+        "taxon_name": "Vespa crabro",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-10-27T23:15:13",
+          "code": "wrong_taxon",
+          "event": "submitted",
+          "evidence": "47e02b00b0e81ef7915370f293b4b3bbfa1e2d69dd05c3e48384426c63e43494",
+          "ruling": "INELIGIBLE"
+        },
+        {
+          "at": "2026-10-27T23:16:44",
+          "before": "INELIGIBLE",
+          "by": "submitter",
+          "code": "wrong_taxon",
+          "event": "contested",
+          "evidence": "0beb7422cc99d4531abbce4760ca219217f51088fbe5be0e4517ed7cf7c2ea45",
+          "ruling": "INELIGIBLE"
+        },
+        {
+          "at": "2026-10-27T23:30:41",
+          "event": "settled",
+          "outcome": "nothing_paid",
+          "ruling": "INELIGIBLE"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "70808cec6aea228579f5fcfc1396d6296361afe7a9191fc06b4d3ee09471d78c",
+          "observation": "https://www.inaturalist.org/observations/411158753",
+          "packet_sha256": "47e02b00b0e81ef7915370f293b4b3bbfa1e2d69dd05c3e48384426c63e43494",
+          "profile": "https://www.inaturalist.org/people/fergy53",
+          "profile_bio_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "read_at": "2026-10-27T23:15:13",
+          "ruling": "INELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/411158753"
+        },
+        {
+          "facts_sha256": "70808cec6aea228579f5fcfc1396d6296361afe7a9191fc06b4d3ee09471d78c",
+          "observation": "https://www.inaturalist.org/observations/411158753",
+          "packet_sha256": "0beb7422cc99d4531abbce4760ca219217f51088fbe5be0e4517ed7cf7c2ea45",
+          "profile": "https://www.inaturalist.org/people/fergy53",
+          "profile_bio_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "read_at": "2026-10-27T23:16:44",
+          "ruling": "INELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/411158753"
+        }
+      ]
+    },
+    "sighting_3": {
+      "observation": "411204951",
+      "call": "call_0",
+      "ruling": "INELIGIBLE",
+      "code": "outside_place",
+      "outcome": "nothing_paid",
+      "state": "settled",
+      "why": "Observation 411204951 (Allee des Pêcheurs-ZA du Turzon, Saint-Georges-les-Bains, Auvergne-Rhône-Alpes, FR) is not inside United Kingdom.",
+      "facts": {
+        "accuracy_m": 290,
+        "annotations": [],
+        "call_place": "United Kingdom",
+        "call_taxon": "Vespa velutina",
+        "captive": false,
+        "condition": "The photo shows a hornet nest",
+        "gbif": "",
+        "geoprivacy": "open",
+        "in_place": false,
+        "max_accuracy_m": 100,
+        "min_account_days": 30,
+        "observation_id": "411204951",
+        "observed_on": "2026-10-23",
+        "observer_id": "8254658",
+        "observer_login": "yoyopago_",
+        "observer_since": "2024-06-10",
+        "per_observer": 2,
+        "photos": 1,
+        "place_guess": "Allee des Pêcheurs-ZA du Turzon, Saint-Georges-les-Bains, Auvergne-Rhône-Alpes, FR",
+        "quality": "research",
+        "taxon_common": "",
+        "taxon_id": "560197",
+        "taxon_name": "Vespa velutina nigrithorax",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-10-27T23:15:21",
+          "code": "outside_place",
+          "event": "submitted",
+          "evidence": "228859b0e787f425c42f219b4eb6e438df5a2d251e3231e0ef59a813100105bc",
+          "ruling": "INELIGIBLE"
+        },
+        {
+          "at": "2026-10-27T23:30:47",
+          "event": "settled",
+          "outcome": "nothing_paid",
+          "ruling": "INELIGIBLE"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "21c6e499640a4f02819f9fbe55b360fa8ef53736b767adf6a5710510f6699465",
+          "observation": "https://www.inaturalist.org/observations/411204951",
+          "packet_sha256": "228859b0e787f425c42f219b4eb6e438df5a2d251e3231e0ef59a813100105bc",
+          "profile": "https://www.inaturalist.org/people/yoyopago_",
+          "profile_bio_sha256": "567612bc9377439d64e0f0594f86fe3ad0099acf4f5e9ef9ffecf1740160fa45",
+          "read_at": "2026-10-27T23:15:21",
+          "ruling": "INELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/411204951"
+        }
+      ]
+    },
+    "sighting_4": {
+      "observation": "182971213",
+      "call": "call_0",
+      "ruling": "INELIGIBLE",
+      "code": "outside_dates",
+      "outcome": "nothing_paid",
+      "state": "settled",
+      "why": "Observation 182971213 was made on 2023-09-11, outside the call's dates.",
+      "facts": {
+        "accuracy_m": 781,
+        "annotations": [
+          "Evidence of Presence: Organism",
+          "Life Stage: Adult"
+        ],
+        "call_place": "United Kingdom",
+        "call_taxon": "Vespa velutina",
+        "captive": false,
+        "condition": "The photo shows a hornet nest",
+        "gbif": "http://www.gbif.org/occurrence/4414283391",
+        "geoprivacy": "open",
+        "in_place": true,
+        "max_accuracy_m": 100,
+        "min_account_days": 30,
+        "observation_id": "182971213",
+        "observed_on": "2023-09-11",
+        "observer_id": "2436836",
+        "observer_login": "phill-robinson",
+        "observer_since": "2019-11-13",
+        "per_observer": 2,
+        "photos": 2,
+        "place_guess": "Hull HU9, UK",
+        "quality": "research",
+        "taxon_common": "",
+        "taxon_id": "560197",
+        "taxon_name": "Vespa velutina nigrithorax",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-10-27T23:15:39",
+          "code": "outside_dates",
+          "event": "submitted",
+          "evidence": "631974281b88df0d7ab3822a7788461f29481d6959f5d546e5b0ba4d32fba8d5",
+          "ruling": "INELIGIBLE"
+        },
+        {
+          "at": "2026-10-27T23:30:54",
+          "event": "settled",
+          "outcome": "nothing_paid",
+          "ruling": "INELIGIBLE"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "1cfe7b0a84fcb9bf4d3d7be46305c20bcb729c96815939e4e07652030e66fe2b",
+          "observation": "https://www.inaturalist.org/observations/182971213",
+          "packet_sha256": "631974281b88df0d7ab3822a7788461f29481d6959f5d546e5b0ba4d32fba8d5",
+          "profile": "https://www.inaturalist.org/people/phill-robinson",
+          "profile_bio_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "read_at": "2026-10-27T23:15:39",
+          "ruling": "INELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/182971213"
+        }
+      ]
+    },
+    "sighting_5": {
+      "observation": "397236834",
+      "call": "call_1",
+      "ruling": "ELIGIBLE",
+      "code": "eligible",
+      "outcome": "awaiting_wallet",
+      "state": "awaiting_wallet",
+      "why": "Observation 397236834 by simoncolenutt is Vespa velutina (research grade), seen on 2026-08-20 at The Abbey, Romsey, UK, inside United Kingdom. simoncolenutt has not put a wallet address in their iNaturalist profile yet, so the reward is held for them.",
+      "facts": {
+        "accuracy_m": 2,
+        "annotations": [],
+        "call_place": "United Kingdom",
+        "call_taxon": "Vespa velutina",
+        "captive": false,
+        "condition": "",
+        "gbif": "http://www.gbif.org/occurrence/6519064393",
+        "geoprivacy": "open",
+        "in_place": true,
+        "max_accuracy_m": 100,
+        "min_account_days": 30,
+        "observation_id": "397236834",
+        "observed_on": "2026-08-20",
+        "observer_id": "4831496",
+        "observer_login": "simoncolenutt",
+        "observer_since": "2021-08-06",
+        "per_observer": 2,
+        "photos": 4,
+        "place_guess": "The Abbey, Romsey, UK",
+        "quality": "research",
+        "taxon_common": "Yellow-legged Hornet",
+        "taxon_id": "119019",
+        "taxon_name": "Vespa velutina",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-10-27T23:18:05",
+          "code": "eligible",
+          "event": "submitted",
+          "evidence": "04d178d791647126206dbf9254b6b7d371bcd5346c9d0cd4a9e0e7fe1e191ab2",
+          "ruling": "ELIGIBLE"
+        },
+        {
+          "amount": "250000000000000000",
+          "at": "2026-10-27T23:18:49",
+          "event": "held",
+          "until": "2027-01-25"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "fd10efedb3804aeef590a2f9931bcebdb0b17cdc789baa641116565906bc7c8d",
+          "observation": "https://www.inaturalist.org/observations/397236834",
+          "packet_sha256": "04d178d791647126206dbf9254b6b7d371bcd5346c9d0cd4a9e0e7fe1e191ab2",
+          "profile": "https://www.inaturalist.org/people/simoncolenutt",
+          "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
+          "read_at": "2026-10-27T23:18:05",
+          "ruling": "ELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/397236834"
+        }
+      ]
+    },
+    "sighting_6": {
+      "observation": "397236811",
+      "call": "call_1",
+      "ruling": "ELIGIBLE",
+      "code": "eligible",
+      "outcome": "awaiting_wallet",
+      "state": "awaiting_wallet",
+      "why": "Observation 397236811 by simoncolenutt is Vespa velutina (research grade), seen on 2026-08-18 at The Abbey, Romsey, UK, inside United Kingdom. simoncolenutt has not put a wallet address in their iNaturalist profile yet, so the reward is held for them.",
+      "facts": {
+        "accuracy_m": 1,
+        "annotations": [],
+        "call_place": "United Kingdom",
+        "call_taxon": "Vespa velutina",
+        "captive": false,
+        "condition": "",
+        "gbif": "http://www.gbif.org/occurrence/6519102855",
+        "geoprivacy": "open",
+        "in_place": true,
+        "max_accuracy_m": 100,
+        "min_account_days": 30,
+        "observation_id": "397236811",
+        "observed_on": "2026-08-18",
+        "observer_id": "4831496",
+        "observer_login": "simoncolenutt",
+        "observer_since": "2021-08-06",
+        "per_observer": 2,
+        "photos": 5,
+        "place_guess": "The Abbey, Romsey, UK",
+        "quality": "research",
+        "taxon_common": "Yellow-legged Hornet",
+        "taxon_id": "119019",
+        "taxon_name": "Vespa velutina",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-10-27T23:18:23",
+          "code": "eligible",
+          "event": "submitted",
+          "evidence": "10df058a647de3b54576a5f247490db1fd4d90c5aa7df859cbb6ad3502fc8c72",
+          "ruling": "ELIGIBLE"
+        },
+        {
+          "amount": "250000000000000000",
+          "at": "2026-10-27T23:31:06",
+          "event": "held",
+          "until": "2027-01-25"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "6da853fd525210e1ecade6728e3fa2fdf149e563957b438b279f211c34a0e2b1",
+          "observation": "https://www.inaturalist.org/observations/397236811",
+          "packet_sha256": "10df058a647de3b54576a5f247490db1fd4d90c5aa7df859cbb6ad3502fc8c72",
+          "profile": "https://www.inaturalist.org/people/simoncolenutt",
+          "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
+          "read_at": "2026-10-27T23:18:23",
+          "ruling": "ELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/397236811"
+        }
+      ]
+    },
+    "sighting_7": {
+      "observation": "392140551",
+      "call": "call_1",
+      "ruling": "INELIGIBLE",
+      "code": "observer_cap",
+      "outcome": "nothing_paid",
+      "state": "settled",
+      "why": "simoncolenutt has already reached this call's limit of 2 paid sightings.",
+      "facts": {
+        "accuracy_m": 2,
+        "annotations": [
+          "Alive or Dead: Alive",
+          "Evidence of Presence: Organism",
+          "Life Stage: Adult"
+        ],
+        "call_place": "United Kingdom",
+        "call_taxon": "Vespa velutina",
+        "captive": false,
+        "condition": "",
+        "gbif": "http://www.gbif.org/occurrence/6500001873",
+        "geoprivacy": "open",
+        "in_place": true,
+        "max_accuracy_m": 100,
+        "min_account_days": 30,
+        "observation_id": "392140551",
+        "observed_on": "2026-08-17",
+        "observer_id": "4831496",
+        "observer_login": "simoncolenutt",
+        "observer_since": "2021-08-06",
+        "per_observer": 2,
+        "photos": 1,
+        "place_guess": "The Abbey, Romsey, England, GB",
+        "quality": "research",
+        "taxon_common": "Yellow-legged Hornet",
+        "taxon_id": "119019",
+        "taxon_name": "Vespa velutina",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-10-27T23:18:36",
+          "code": "observer_cap",
+          "event": "submitted",
+          "evidence": "c592cbf6a61e69c1facdea0d36cffeea3b8b661c3daac4b51333fd8115fdf4d2",
+          "ruling": "INELIGIBLE"
+        },
+        {
+          "at": "2026-10-27T23:31:17",
+          "event": "settled",
+          "outcome": "nothing_paid",
+          "ruling": "INELIGIBLE"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "d1988cfb5d22d10920b0f7fce3b8c36d4dd21ae129ddaf3a7444cc84036e5675",
+          "observation": "https://www.inaturalist.org/observations/392140551",
+          "packet_sha256": "c592cbf6a61e69c1facdea0d36cffeea3b8b661c3daac4b51333fd8115fdf4d2",
+          "profile": "https://www.inaturalist.org/people/simoncolenutt",
+          "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
+          "read_at": "2026-10-27T23:18:36",
+          "ruling": "INELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/392140551"
+        }
+      ]
+    }
+  },
+  "reconciliations": [
+    {
+      "label": "call 0 open, the nest's reward reserved",
+      "expected": "3000000000000000000",
+      "balance": "3000000000000000000",
+      "ok": true
+    },
+    {
+      "label": "both calls open",
+      "expected": "4000000000000000000",
+      "balance": "4000000000000000000",
+      "ok": true
+    },
+    {
+      "label": "end of run",
+      "expected": "4000000000000000000",
+      "balance": "4000000000000000000",
+      "ok": true
+    }
+  ],
+  "balances": {
+    "sponsor": "17000000000000000000",
+    "cofunder": "4000000000000000000",
+    "scout": "1000000000000000000",
+    "bystander": "1000000000000000000"
+  },
+  "log": [
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet nests, UK\", \"Vespa velutina\", \"6857\", \"2026-08-01\", \"2026-12-26\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
+      "value": "2",
+      "hash": "0x269225f267e458ca969ce62dd904b6fe44c52a86d75298f09142226eab9e6248",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: taxon_id must be an iNaturalist taxon id, like 119019"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet nests, UK\", \"999999999\", \"6857\", \"2026-08-01\", \"2026-12-26\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
+      "value": "2",
+      "hash": "0xa97f34f9cafa42b34aaed953749f914e1d1260b5e3052837b2b3131f7bcbfb7b",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: iNaturalist has no taxon with that id"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"999999999\", \"2026-08-01\", \"2026-12-26\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
+      "value": "2",
+      "hash": "0x447351fd442d29df32fb5df7af75862a764144fcc676e459e9e9d94016878375",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: iNaturalist has no place with that id"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-09-30\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
+      "value": "2",
+      "hash": "0x61d172c55e7397dd9c153013a51fa0bb6686dae685c01138269cfd3befaebfd7",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: ends must be on or after starts, and not in the past"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-12-26\", 0.05 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
+      "value": "2",
+      "hash": "0xd09e32d806a363c1b4f1f8b3aeba563b54f9ee3ad25f15dd9f06350ad5a56bd5",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: reward must be at least 0.1 GEN"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-12-26\", 1 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
+      "value": "0.5",
+      "hash": "0xff8f9ce9224e259da9e6db50c1b83e6adbe4f0e9206d8e352dd91411a0dc3fb9",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "REFUNDED: fund the call with at least one reward"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-12-26\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
+      "value": "2",
+      "hash": "0xc99fd64aedfd4705a09e99432e6e07338b0762659bbf8aab039e76a7d7b71e94",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "call_0"
+    },
+    {
+      "who": "cofunder",
+      "call": "fund(\"call_0\")",
+      "value": "1",
+      "hash": "0x12648d2e90d07952a97d818692bcf6b92ce592b2a444c363dc0ef74e215a5673",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "funded"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_0\", \"397236824\")",
+      "value": "0",
+      "hash": "0x8b107f21801046da282f902bbfea35f31231cc322450ce39dd5bcd408664395a",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_0"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_0\", \"397236834\")",
+      "value": "0",
+      "hash": "0x3e4f593639cff4ab1a34c79aab64553ce84aa4ea9181ff2c2ebe004c3998e252",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_1"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_0\", \"411158753\")",
+      "value": "0",
+      "hash": "0xb94f149e6d756b3014566667e3d11446c8aace4444b322b000c4c6c61eb847c6",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_2"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_0\", \"411204951\")",
+      "value": "0",
+      "hash": "0xa755828cb0b1182619acf73135b776f43d7b781ddf9bad61a2c8763f9637e701",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_3"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_0\", \"182971213\")",
+      "value": "0",
+      "hash": "0x21d34a86e8c402a74030686fe2389be2db6df54b8d77fb4694197a8ea588b063",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_4"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_0\", \"397236824\")",
+      "value": "0",
+      "hash": "0x48d42338abeaa833ad555445ff9621c810c306b9167e09ac9bf11f0ae25d2abe",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "sighting_0 for this observation is still open"
+    },
+    {
+      "who": "scout",
+      "call": "settle(\"sighting_0\")",
+      "value": "0",
+      "hash": "0x36a43339bc811bad8eb89b49c263aa0b7efa3ee09cce0b6e5eac124e94c99be1",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "The response window is still open; only a funder can pay early"
+    },
+    {
+      "who": "cofunder",
+      "call": "contest(\"sighting_0\")",
+      "value": "0",
+      "hash": "0x262005a835c4c26a661de7e1c2537db1cf9c1919b271811fdb845a9b8f34d909",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "ELIGIBLE"
+    },
+    {
+      "who": "scout",
+      "call": "contest(\"sighting_2\")",
+      "value": "0",
+      "hash": "0x98662c70dd6a6716224871196968d37af3e4aff3ee7e27131c758b844d895a11",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "INELIGIBLE"
+    },
+    {
+      "who": "scout",
+      "call": "settle(\"sighting_1\")",
+      "value": "0",
+      "hash": "0x65fb16b6f45a9c28cf7492d74fe9108a9f93f519e1135471e876ac2b9b221fee",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "nothing_paid"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet sightings, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-12-26\", 0.25 GEN, 2, true, 30, 100, \"\")",
+      "value": "1",
+      "hash": "0x95350a681e701b3e4424065ae09ae4513a257ac3f02ff2a1788d3ccec9274b74",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "call_1"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_1\", \"397236834\")",
+      "value": "0",
+      "hash": "0x6c6a990d80084a17cd8300fb744962900a60f0f8200b4faa77adf04627281cb3",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_5"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_1\", \"397236811\")",
+      "value": "0",
+      "hash": "0x9f409ae83779185eb36ccbbdc03a4977f8b6d5c915fff688cacd983d72104b23",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_6"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_1\", \"392140551\")",
+      "value": "0",
+      "hash": "0x7677eb3a4f8313682321112d54486eaa7cd3971f51000014c74528d1185544b9",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_7"
+    },
+    {
+      "who": "sponsor",
+      "call": "settle(\"sighting_5\")",
+      "value": "0",
+      "hash": "0xe8cc1fbf905cdcf10f6c87fa440908738aa7b6ca85c7ed67d55e04bccdfb9945",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "awaiting_wallet"
+    },
+    {
+      "who": "bystander",
+      "call": "collect(\"sighting_5\")",
+      "value": "0",
+      "hash": "0xe265115063bcea29647e2607b78fe420854cb9539908a04a6548cd6d6761aa26",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "simoncolenutt has not added a wallet address to their iNaturalist profile yet"
+    },
+    {
+      "who": "bystander",
+      "call": "close(\"call_1\")",
+      "value": "0",
+      "hash": "0xda218708f3daef2d0b4c436ab700da1e4d773eabf87c9177753bb039753b7e6f",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "Sightings can be submitted and rewards collected until 2027-01-25"
+    },
+    {
+      "who": "bystander",
+      "call": "settle(\"sighting_0\")",
+      "value": "0",
+      "hash": "0x4953a9575e5e72cafaf751f31d160807b26b4a707a90c8060d01e52b1eebcbc0",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "awaiting_wallet"
+    },
+    {
+      "who": "bystander",
+      "call": "settle(\"sighting_2\")",
+      "value": "0",
+      "hash": "0xef7cff7ef99967794a34f3a9af9198f1137f8b2e986159efd16088c41890cfb0",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "nothing_paid"
+    },
+    {
+      "who": "bystander",
+      "call": "settle(\"sighting_3\")",
+      "value": "0",
+      "hash": "0xab2ffad58674a7d341920c5414a0e0249dd52b589086419082d7b037a393b749",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "nothing_paid"
+    },
+    {
+      "who": "bystander",
+      "call": "settle(\"sighting_4\")",
+      "value": "0",
+      "hash": "0x72cc50bb08060f964c9b158c52a4a1f8d4352fcbdfe4f5020bc3fb7e61f2e77e",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "nothing_paid"
+    },
+    {
+      "who": "bystander",
+      "call": "settle(\"sighting_6\")",
+      "value": "0",
+      "hash": "0x3f7821dafd99c288316870152580ea3b1da9ae92a5bf7f9c8f86e290c76a52af",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "awaiting_wallet"
+    },
+    {
+      "who": "bystander",
+      "call": "settle(\"sighting_7\")",
+      "value": "0",
+      "hash": "0xc38a679abd3c21c9fa3e60fb5a34e1f3cc705cb18285e7f614b03c4d66fed93e",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "nothing_paid"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_0\", \"397236824\")",
+      "value": "0",
+      "hash": "0xf4122f41f6c1c2e860213594a8db087fdd7287036072e4af5fba3a638731dec4",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "This observation has already earned its reward (sighting_0)"
+    }
+  ]
+}

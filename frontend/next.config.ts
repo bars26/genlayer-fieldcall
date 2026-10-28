@@ -8,7 +8,8 @@ const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
+  // iNaturalist photos: open-licence ones on the S3 bucket, the rest on static.inaturalist.org.
+  "img-src 'self' data: https://inaturalist-open-data.s3.amazonaws.com https://static.inaturalist.org https://*.inaturalist.org",
   "font-src 'self' data:",
   "connect-src 'self' https: wss:",
   "object-src 'none'",

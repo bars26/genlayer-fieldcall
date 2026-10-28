@@ -41,4 +41,4 @@ jobs:
       - run: cd frontend && npx tsc --noEmit
       - run: cd frontend && npm run build
         env:
-          NEXT_PUBLIC_CONTRACT_ADDRESS: "0x0F8709541c0ae378A2E1a1958032d7CaE3f269Dc"
+          NEXT_PUBLIC_CONTRACT_ADDRESS: "0x58576b0a8C0091b8E7E276EDCa9b5D2d9bC826aE"

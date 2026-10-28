@@ -38,6 +38,25 @@ const pots = run.calls.map((id) => {
   return `| ${id} | ${gen(p.funded)} | ${gen(p.paid)} | ${gen(p.reserved)} | ${gen(p.pot)} | ${p.rewards_left} | ${p.state} | ${p.collect_until} |`;
 });
 
+// v1.1 checks the reviewers asked for, picked out of the transaction log.
+const pick = (re) => run.log.find((r) => re.test(r.call));
+const v11 = [
+  ["A call starting on 2026-02-31 (no such date) is refunded, not crashed", pick(/create_call\(.*"2026-02-31"/)],
+  ["A 0.05 GEN top-up (below the 0.1 GEN minimum) is sent back", pick(/^fund\(.*\)$/) && run.log.find((r) => /^fund\(/.test(r.call) && r.value === "0.05")],
+  ["A fourth submission of the same observation to the same call is refused", [...run.log].reverse().find((r) => /submit\(.*"411204951"\)/.test(r.call) && r.refused)],
+].filter(([, r]) => r);
+const v11Table = v11.length
+  ? `## v1.1 checks, live
+
+| Check | Result | Tx |
+|---|---|---|
+${v11.map(([what, r]) => `| ${what} | ${esc(r.returned || r.refused || r.exec)} | ${tx(r.hash)} |`).join("\n")}
+
+Closing and refunding need a call past its collect date (call end + 30 days), so they are shown by the direct tests, including
+\`test_stress_hundreds_of_funders_and_refused_sightings_still_close_and_repay_everyone\` (301 funders, 120 refused submissions).
+`
+  : "";
+
 let uiTest = "";
 const uiPath = new URL("../docs/ui-test.json", import.meta.url);
 if (existsSync(uiPath)) {
@@ -104,6 +123,7 @@ ${packets.join("\n")}
 
 ${timelines.join("\n")}
 
+${v11Table}
 ${uiTest}
 ## Every transaction
 

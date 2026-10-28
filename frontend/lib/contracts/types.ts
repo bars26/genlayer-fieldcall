@@ -25,15 +25,24 @@ export interface Call {
   reserved: Num;
   funded_total: Num;
   paid_total: Num;
+  returnable: Num;
   returned_total: Num;
-  funders_json: string;
-  observers_json: string;
-  sighting_ids_json: string;
+  n_funders: Num;
+  n_refunded: Num;
+  n_sightings: Num;
   n_eligible: Num;
   n_paid: Num;
   n_pending: Num;
   created_at: string;
   history_json: string;
+  /** Not stored on the call: attached by the registry snapshot from get_funders. */
+  funders?: FunderRow[];
+}
+
+export interface FunderRow {
+  address: string;
+  amount: string;
+  refunded: boolean;
 }
 
 export interface Sighting {
@@ -212,8 +221,11 @@ export const taxonOf = (c: Call) => parseJson<Taxon>(c.taxon_json, { name: c.tax
 export const factsOf = (s: Sighting) => parseJson<SightingFacts>(s.facts_json, {});
 export const timelineOf = (s: Sighting) => parseJson<TimelineStep[]>(s.timeline_json, []);
 export const evidenceOf = (s: Sighting) => parseJson<EvidencePacket[]>(s.evidence_json, []);
-export const fundersOf = (c: Call) => parseJson<Record<string, string>>(c.funders_json, {});
-export const isFunder = (c: Call, a?: string | null) => !!a && Object.keys(fundersOf(c)).some((k) => sameAddress(k, a));
+export const fundersOf = (c: Call): FunderRow[] => c.funders ?? [];
+export const isFunder = (c: Call, a?: string | null) => !!a && fundersOf(c).some((f) => sameAddress(f.address, a));
+export const funderRow = (c: Call, a?: string | null) => (a ? fundersOf(c).find((f) => sameAddress(f.address, a)) : undefined);
+/** A held reward on a closed call expired: it went back to the funders with the pot. */
+export const isExpired = (s: Sighting, c: Call) => s.state === "awaiting_wallet" && c.state === "closed";
 export const rewardsLeft = (c: Call) => (wei(c.reward) > 0n ? Number(wei(c.pot) / wei(c.reward)) : 0);
 export const obsUrl = (id: string) => `https://www.inaturalist.org/observations/${id}`;
 export const taxonUrl = (id: string) => `https://www.inaturalist.org/taxa/${id}`;

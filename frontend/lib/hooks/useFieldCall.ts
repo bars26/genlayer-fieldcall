@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import FieldCall, { type CreateCallInput, type TxProgress, type TxResult } from "../contracts/FieldCall";
-import { isFunder, sameAddress, todayUtc, wei, windowLeftSeconds, RULING_STYLE, factsOf, type Call, type Ruling, type Sighting } from "../contracts/types";
+import { formatGen, isFunder, sameAddress, todayUtc, wei, windowLeftSeconds, RULING_STYLE, factsOf, type Call, type Ruling, type Sighting } from "../contracts/types";
 import { getContractAddress, getStudioUrl } from "../genlayer/client";
 import { useWallet } from "../genlayer/wallet";
 import { TxError, classifyError } from "../utils/errors";
@@ -71,7 +71,7 @@ export function useRegistry() {
 async function mergeFresh(qc: ReturnType<typeof useQueryClient>, contract: FieldCall, callId?: string, sightingId?: string) {
   try {
     const [call, sighting] = await Promise.all([
-      callId ? contract.getCall(callId) : Promise.resolve(null),
+      callId ? contract.getCallWithFunders(callId) : Promise.resolve(null),
       sightingId ? contract.getSighting(sightingId) : Promise.resolve(null),
     ]);
     qc.setQueryData<Registry>(["registry"], (prev) => {
@@ -94,7 +94,8 @@ export type WriteVars =
   | { kind: "contest"; sightingId: string }
   | { kind: "settle"; sightingId: string }
   | { kind: "collect"; sightingId: string }
-  | { kind: "close"; callId: string };
+  | { kind: "close"; callId: string }
+  | { kind: "refund"; callId: string; funder: string };
 
 export const WRITE_LABEL: Record<TxKind, string> = {
   create: "Open a call",
@@ -104,6 +105,7 @@ export const WRITE_LABEL: Record<TxKind, string> = {
   settle: "Settle",
   collect: "Collect a held reward",
   close: "Close the call",
+  refund: "Return a funder's share",
 };
 
 const rulingNote = (v: unknown, s?: Sighting) => {
@@ -130,7 +132,13 @@ export function useFieldCallWrite() {
               ? vars.sightingId
               : vars.callId;
       const logId = startTx(vars.kind, target);
-      setPending(vars.kind === "create" ? "create" : `${vars.kind}:${"sightingId" in vars ? vars.sightingId : vars.callId}`);
+      setPending(
+        vars.kind === "create"
+          ? "create"
+          : vars.kind === "refund"
+            ? `refund:${vars.callId}:${vars.funder.toLowerCase()}`
+            : `${vars.kind}:${"sightingId" in vars ? vars.sightingId : vars.callId}`
+      );
       const onProgress = (p: TxProgress) =>
         updateTx(logId, {
           state: p.step === "awaiting_wallet" ? "awaiting_wallet" : p.step === "accepted" ? "accepted" : "confirming",
@@ -219,6 +227,8 @@ export function useFieldCallWrite() {
             const s = await contract.getSighting(vars.sightingId);
             callId = s.call_id;
             if (s.state !== "awaiting_wallet") refuse("Only a held reward can be collected.");
+            const c = await contract.getCall(s.call_id);
+            if (c.state !== "open") refuse("This call is closed: the held reward expired and went back to the funders.");
             result = await contract.collect(vars.sightingId, onProgress);
             note = "Paid to the wallet now in the observer's iNaturalist profile.";
             break;
@@ -229,7 +239,17 @@ export function useFieldCallWrite() {
             if (todayUtc() <= c.collect_until) refuse(`Sightings can be submitted and rewards collected until ${c.collect_until}.`);
             if (wei(c.n_pending) > 0n) refuse("Settle the open sightings first.");
             result = await contract.close(vars.callId, onProgress);
-            note = "The pot went back to the funders in proportion to what each put in.";
+            note = "Closed. Each funder's share can now be returned, one funder per transaction, by anyone.";
+            break;
+          }
+          case "refund": {
+            const c = await contract.getCallWithFunders(vars.callId);
+            if (c.state !== "closed") refuse("Close the call first.");
+            const row = c.funders?.find((f) => sameAddress(f.address, vars.funder));
+            if (!row) refuse("That wallet did not fund this call.");
+            if (row?.refunded) refuse("That funder's share has already been returned.");
+            result = await contract.refund(vars.callId, vars.funder, onProgress);
+            note = `${formatGen(String(result.returned ?? "0"), 4)} GEN returned to ${vars.funder.slice(0, 6)}…${vars.funder.slice(-4)}.`;
             break;
           }
         }

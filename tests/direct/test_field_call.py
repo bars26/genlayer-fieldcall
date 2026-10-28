@@ -108,7 +108,8 @@ def test_call_freezes_taxon_place_and_terms(direct_vm, direct_deploy, direct_ali
     assert (c.place_name, c.starts, c.condition, int(c.reward), int(c.per_observer)) == ("United Kingdom", "2026-08-01", NEST, GEN // 2, 2)
     assert c.collect_until == (datetime.fromisoformat(c.ends) + timedelta(days=30)).strftime("%Y-%m-%d")
     assert json.loads(contract.pot(call_id)) == {"pot": str(2 * GEN), "reserved": "0", "paid": "0", "funded": str(2 * GEN),
-                                                 "returned": "0", "rewards_left": 4, "state": "open", "collect_until": c.collect_until}
+                                                 "returnable": "0", "returned": "0", "funders": 1, "refunded": 0,
+                                                 "rewards_left": 4, "state": "open", "collect_until": c.collect_until}
     assert json.loads(contract.totals()) == {"expected_balance": str(2 * GEN)}
 
 
@@ -116,7 +117,7 @@ def test_call_freezes_taxon_place_and_terms(direct_vm, direct_deploy, direct_ali
     (dict(title="ab"), None, 2 * GEN, "title must be 3 to 80 characters"),
     (dict(taxon_id="Vespa velutina"), None, 2 * GEN, "taxon_id must be an iNaturalist taxon id"),
     (dict(place_id="UK"), None, 2 * GEN, "place_id must be an iNaturalist place id"),
-    (dict(starts="August"), None, 2 * GEN, "starts and ends must be YYYY-MM-DD dates"),
+    (dict(starts="August"), None, 2 * GEN, "starts and ends must be real calendar dates written YYYY-MM-DD"),
     (dict(ends="2026-07-01"), None, 2 * GEN, "ends must be on or after starts, and not in the past"),
     (dict(starts="2025-01-01", ends=_days_from_now(1)), None, 2 * GEN, "a call covers at most 366 days"),
     (dict(reward=GEN // 20), None, 2 * GEN, "reward must be at least 0.1 GEN"),
@@ -141,10 +142,17 @@ def test_anyone_funds_a_call_and_funding_stops_at_the_end(direct_vm, direct_depl
     direct_vm.sender, direct_vm.value = direct_bob, GEN
     assert contract.fund(call_id) == "funded"
     direct_vm.value = 0
-    assert direct_vm.value == 0 and contract.fund(call_id).startswith("REFUNDED: Send some GEN")
+    assert direct_vm.value == 0 and contract.fund(call_id).startswith("REFUNDED: Send at least 0.1 GEN")
+    direct_vm.value = GEN // 20
+    assert contract.fund(call_id) == "REFUNDED: Send at least 0.1 GEN to fund the call"  # no dust funders
+    direct_vm.sender, direct_vm.value = direct_alice, GEN // 2
+    assert contract.fund(call_id) == "funded"  # a second top-up adds to the same funder
     c = contract.get_call(call_id)
-    assert json.loads(c.funders_json) == {to_hex(direct_alice): str(2 * GEN), to_hex(direct_bob): str(GEN)}
-    assert (int(c.pot), int(c.funded_total)) == (3 * GEN, 3 * GEN)
+    assert json.loads(contract.get_funders(call_id, 0, 200)) == [
+        {"address": to_hex(direct_alice), "amount": str(5 * GEN // 2), "refunded": False},
+        {"address": to_hex(direct_bob), "amount": str(GEN), "refunded": False}]
+    assert json.loads(contract.funding_of(to_hex(direct_bob))) == {call_id: {"amount": str(GEN), "refunded": False}}
+    assert (int(c.pot), int(c.funded_total), int(c.n_funders)) == (7 * GEN // 2, 7 * GEN // 2, 2)
     contract.calls[call_id].ends = "2020-01-01"
     direct_vm.value = GEN
     assert contract.fund(call_id) == "REFUNDED: This call no longer takes funding"
@@ -273,7 +281,7 @@ def test_per_observer_cap(direct_vm, direct_deploy, direct_alice, direct_bob, di
     s = contract.get_sighting(sid)
     assert (s.ruling, s.code, int(s.reward)) == ("INELIGIBLE", "observer_cap", 0)
     assert "simoncolenutt has already reached this call's limit of 2 paid sightings" in s.why
-    assert json.loads(contract.get_call(call_id).observers_json) == {str(OBSERVER): 2}
+    assert int(contract.observer_counts[f"{call_id}|{OBSERVER}"]) == 2
     other = _observation("500", user_id=777, login="someone")
     sid4 = _submit(direct_vm, contract, direct_bob, obs_id="500", obs=other, user_id=777)
     assert contract.get_sighting(sid4).ruling == "ELIGIBLE"
@@ -352,7 +360,7 @@ def test_contests_reread_and_each_side_contests_once(direct_vm, direct_deploy, d
     direct_vm.sender = direct_alice
     assert contract.contest(sid) == "INELIGIBLE"
     assert json.loads(contract.pot(call_id))["reserved"] == "0"
-    assert json.loads(contract.get_call(call_id).observers_json) == {str(OBSERVER): 0}
+    assert int(contract.observer_counts[f"{call_id}|{OBSERVER}"]) == 0
     _setup(direct_vm, bio=_bio(direct_charlie))
     direct_vm.sender = direct_charlie  # the observer's wallet answers back
     assert contract.contest(sid) == "ELIGIBLE"
@@ -384,8 +392,31 @@ def test_contest_by_a_co_funder_and_a_reserved_reward_is_released_once(direct_vm
 # --- closing -----------------------------------------------------------------
 
 
-def test_close_returns_the_pot_pro_rata_and_expires_held_rewards(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie):
+def _payments(contract, monkeypatch):
+    """Record every GEN transfer the contract makes (refunds, rewards, returns) instead of sending it."""
+    import sys
+
+    sent = []
+
+    class Recorder:
+        def __init__(self, to):
+            self.to = to
+
+        def emit_transfer(self, value):
+            sent.append((self.to.as_hex, int(value)))
+
+    monkeypatch.setattr(sys.modules[type(contract).__module__], "_Wallet", Recorder)
+    return sent
+
+
+def _wallet(n):
+    return (0xF1E1D000 + n).to_bytes(20, "big")
+
+
+def test_close_returns_the_pot_pro_rata_and_expires_held_rewards(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie,
+                                                                monkeypatch):
     contract, call_id = _call(direct_vm, direct_deploy, direct_alice)
+    sent = _payments(contract, monkeypatch)
     direct_vm.sender, direct_vm.value = direct_bob, GEN
     contract.fund(call_id)
     direct_vm.value = 0
@@ -393,6 +424,8 @@ def test_close_returns_the_pot_pro_rata_and_expires_held_rewards(direct_vm, dire
     _expire(contract, paid)
     contract.settle(paid)
     held = _submit(direct_vm, contract, direct_charlie, obs_id="500", obs=_observation("500", user_id=777), user_id=777)
+    with direct_vm.expect_revert("Close the call first"):
+        contract.refund(call_id, to_hex(direct_bob))
     with direct_vm.expect_revert("Sightings can be submitted and rewards collected until"):
         contract.close(call_id)
     contract.calls[call_id].collect_until = "2020-01-01"
@@ -402,14 +435,112 @@ def test_close_returns_the_pot_pro_rata_and_expires_held_rewards(direct_vm, dire
     assert contract.settle(held) == "awaiting_wallet"
     with direct_vm.expect_revert("could be collected until 2020-01-01"):
         contract.collect(held)
-    assert contract.close(call_id) == str(5 * GEN // 2)  # 3 GEN funded, 0.5 paid
+    assert contract.close(call_id) == str(5 * GEN // 2)  # 3 GEN funded, 0.5 paid; the held 0.5 expires
     c = contract.get_call(call_id)
-    assert (c.state, int(c.pot), int(c.reserved), int(c.returned_total)) == ("closed", 0, 0, 5 * GEN // 2)
-    assert contract.get_sighting(held).outcome == "expired"
+    assert (c.state, int(c.pot), int(c.reserved), int(c.returnable), int(c.returned_total)) == ("closed", 0, 0, 5 * GEN // 2, 0)
+    assert json.loads(c.history_json)[-1]["event"] == "closed" and json.loads(c.history_json)[-1]["expired"] == str(GEN // 2)
+    with direct_vm.expect_revert("held reward expired"):
+        contract.collect(held)
+    assert json.loads(contract.totals())["expected_balance"] == str(5 * GEN // 2)
+    direct_vm.sender = direct_charlie  # anyone sends a funder their share, but only to that funder
+    assert contract.refund(call_id, to_hex(direct_alice)) == str(5 * GEN // 2 * 2 // 3)
+    with direct_vm.expect_revert("has already been returned"):
+        contract.refund(call_id, to_hex(direct_alice))
+    with direct_vm.expect_revert("did not fund call_0"):
+        contract.refund(call_id, to_hex(direct_charlie))
+    with direct_vm.expect_revert("funder must be a 0x address"):
+        contract.refund(call_id, "alice")
+    assert contract.refund(call_id, to_hex(direct_bob)) == str(5 * GEN // 2 - 5 * GEN // 2 * 2 // 3)  # last one: the remainder
+    c = contract.get_call(call_id)
+    assert (int(c.returned_total), int(c.n_refunded)) == (5 * GEN // 2, 2)
     assert json.loads(contract.totals())["expected_balance"] == "0"
-    assert json.loads(c.history_json)[-1] == {"at": json.loads(c.history_json)[-1]["at"], "event": "closed", "returned": str(5 * GEN // 2)}
+    assert sent[-2:] == [(to_hex(direct_alice), 5 * GEN // 2 * 2 // 3), (to_hex(direct_bob), 5 * GEN // 2 - 5 * GEN // 2 * 2 // 3)]
+    assert sum(a for _, a in sent) == 3 * GEN  # everything funded left the contract: 0.5 paid out, 2.5 returned
     with direct_vm.expect_revert("already closed"):
         contract.close(call_id)
+
+
+@pytest.mark.parametrize("starts, ends", [("2026-02-31", None), ("2026-08-01", "2026-13-01"), ("2026-08-01", "2027-02-29"),
+                                          ("2026-00-10", None), ("2026-08-01", "2026-11-31")])
+def test_impossible_calendar_dates_are_refunded_not_crashed(direct_vm, direct_deploy, direct_alice, monkeypatch, starts, ends):
+    direct_vm.sender = direct_alice
+    contract = direct_deploy(CONTRACT_PATH)
+    sent = _payments(contract, monkeypatch)
+    _setup(direct_vm)
+    direct_vm.value = 2 * GEN
+    result = contract.create_call("Asian hornet sightings, UK", HORNET, UK, starts, ends or _days_from_now(60), GEN // 2,
+                                  2, True, 30, 100, "")
+    direct_vm.value = 0
+    assert result == "REFUNDED: starts and ends must be real calendar dates written YYYY-MM-DD"
+    assert sent == [(to_hex(direct_alice), 2 * GEN)]  # the caller's GEN came back in full
+    assert int(contract.call_count) == 0 and json.loads(contract.totals()) == {"expected_balance": "0"}
+
+
+def test_an_observation_can_be_submitted_to_a_call_at_most_three_times(direct_vm, direct_deploy, direct_alice, direct_bob):
+    contract, call_id = _call(direct_vm, direct_deploy, direct_alice)
+    for n in range(3):
+        sid = _submit(direct_vm, contract, direct_bob, obs=_observation(captive=True))
+        assert contract.get_sighting(sid).code == "captive"
+        _expire(contract, sid)
+        contract.settle(sid)
+    _setup(direct_vm, obs=_observation(captive=True))
+    with direct_vm.expect_revert("has been submitted to this call 3 times"):
+        contract.submit(call_id, OBS)
+    assert int(contract.get_call(call_id).n_sightings) == 3
+
+
+def test_stress_hundreds_of_funders_and_refused_sightings_still_close_and_repay_everyone(
+        direct_vm, direct_deploy, direct_alice, direct_bob, monkeypatch):
+    """An attacker pads a call with 300 minimum top-ups from 300 wallets and 120 refused submissions (40 observations,
+    each resubmitted to the cap). Closing still does a fixed amount of work, every funder is repaid by their own
+    refund, and every wei the call received leaves the contract."""
+    contract, call_id = _call(direct_vm, direct_deploy, direct_alice, fund=2 * GEN)
+    sent = _payments(contract, monkeypatch)
+    funders = [_wallet(i) for i in range(300)]
+    for i, who in enumerate(funders):
+        direct_vm.sender, direct_vm.value = who, GEN // 10 + i  # uneven amounts, so shares do not divide evenly
+        assert contract.fund(call_id) == "funded"
+    direct_vm.value = 0
+    funded = 2 * GEN + sum(GEN // 10 + i for i in range(300))
+    refused = 0
+    for o in range(40):
+        oid = str(900000 + o)
+        for _ in range(3):
+            sid = _submit(direct_vm, contract, direct_bob, obs_id=oid, obs=_observation(oid, captive=True))
+            _expire(contract, sid)
+            contract.settle(sid)
+            refused += 1
+        _setup(direct_vm, obs_id=oid, obs=_observation(oid, captive=True))
+        with direct_vm.expect_revert("submitted to this call 3 times"):
+            contract.submit(call_id, oid)
+    c = contract.get_call(call_id)
+    assert (int(c.n_funders), int(c.n_sightings), int(c.funded_total)) == (301, refused, funded)
+    assert len(contract.get_call(call_id).history_json) < 4000  # the call record itself does not grow with use
+
+    contract.calls[call_id].collect_until = "2020-01-01"
+    reads = {"n": 0}
+    real = type(contract.sightings).__getitem__
+    per_item = lambda k: str(k).startswith("sighting_") or "|" in str(k)  # sightings, funders, observer counts
+    monkeypatch.setattr(type(contract.sightings), "__getitem__",
+                        lambda m, k: (reads.__setitem__("n", reads["n"] + per_item(k)), real(m, k))[1])
+    direct_vm.sender = direct_bob
+    assert contract.close(call_id) == str(funded)
+    assert reads["n"] == 0  # closing touched no sighting and no funder: its cost does not depend on either
+    monkeypatch.setattr(type(contract.sightings), "__getitem__", real)
+
+    rows = []
+    for offset in (0, 200):
+        rows += json.loads(contract.get_funders(call_id, offset, 200))
+    assert len(rows) == 301 and rows[0]["address"] == to_hex(direct_alice)
+    for row in rows:  # one bounded transaction per funder, sent by anyone, in any order
+        assert int(contract.refund(call_id, row["address"])) > 0
+    c = contract.get_call(call_id)
+    assert (int(c.n_refunded), int(c.returned_total)) == (301, funded)
+    assert sum(a for _, a in sent) == funded and len(sent) == 301
+    for row, (to, amount) in zip(rows, sent):
+        assert to == row["address"] and abs(amount - funded * int(row["amount"]) // funded) <= 301
+    assert json.loads(contract.totals()) == {"expected_balance": "0"}
+    assert all(r["refunded"] for r in json.loads(contract.get_funders(call_id, 0, 200)))
 
 
 # --- evidence and registry ---------------------------------------------------

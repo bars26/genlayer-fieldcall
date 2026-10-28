@@ -8,6 +8,7 @@ import {
   evidenceOf,
   factsOf,
   formatGen,
+  isExpired,
   isFunder,
   isZero,
   obsUrl,
@@ -41,6 +42,8 @@ export function SightingCard({ s, call, obs }: { s: Sighting; call: Call; obs?: 
     isConnected && s.state === "pending" && left > 0 && (s.ruling === "ELIGIBLE" ? funder && !s.funders_contested : mineToAnswer && !s.submitter_contested);
   const canSettle = isConnected && s.state === "pending" && (left === 0 || (s.ruling === "ELIGIBLE" ? funder : sameAddress(s.submitter, address)));
   const busy = (k: string) => pending === `${k}:${s.id}`;
+  const expired = isExpired(s, call);
+  const held = s.state === "awaiting_wallet" && !expired;
   const lastLook = [...packets].reverse().find((p) => p.photos?.length)?.photos ?? [];
   const photo = obs?.photos[0];
 
@@ -85,10 +88,10 @@ export function SightingCard({ s, call, obs }: { s: Sighting; call: Call; obs?: 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
           {s.ruling === "ELIGIBLE" && wei0(s) && (
             <span className="tape text-[11px] font-semibold">
-              {formatGen(s.reward, 4)} GEN {s.outcome === "paid" ? "paid" : s.outcome === "expired" ? "returned" : "reserved"}
+              {formatGen(s.reward, 4)} GEN {s.outcome === "paid" ? "paid" : expired ? "returned to the funders" : "reserved"}
             </span>
           )}
-          {s.outcome && <span className="font-medium">{OUTCOME_TEXT[s.outcome] ?? s.outcome}</span>}
+          {s.outcome && <span className="font-medium">{expired ? "Expired: nobody collected it before the call closed" : OUTCOME_TEXT[s.outcome] ?? s.outcome}</span>}
           {!isZero(s.payee) && <span className="mono">to {short(s.payee)}</span>}
           {s.state === "pending" && (
             <span className="text-muted-foreground">
@@ -97,7 +100,7 @@ export function SightingCard({ s, call, obs }: { s: Sighting; call: Call; obs?: 
           )}
         </div>
 
-        {(canContest || canSettle || s.state === "awaiting_wallet") && (
+        {(canContest || canSettle || held) && (
           <div className="flex flex-wrap gap-2 pt-1">
             {canSettle && (
               <Button size="sm" variant="gradient" disabled={!!pending} onClick={() => writeAsync({ kind: "settle", sightingId: s.id }).catch(() => {})}>
@@ -111,7 +114,7 @@ export function SightingCard({ s, call, obs }: { s: Sighting; call: Call; obs?: 
                 Ask for a fresh reading
               </Button>
             )}
-            {s.state === "awaiting_wallet" && (
+            {held && (
               <Button size="sm" variant="outline" disabled={!isConnected || !!pending} onClick={() => writeAsync({ kind: "collect", sightingId: s.id }).catch(() => {})}>
                 {busy("collect") && <Loader2 className="h-4 w-4 animate-spin" />}
                 Collect for {s.observer_login || "the observer"}
@@ -119,7 +122,7 @@ export function SightingCard({ s, call, obs }: { s: Sighting; call: Call; obs?: 
             )}
           </div>
         )}
-        {s.state === "awaiting_wallet" && (
+        {held && (
           <p className="text-xs text-muted-foreground">
             Held until {call.collect_until}. {s.observer_login || "The observer"} adds a 0x wallet address to their iNaturalist profile, then anyone presses
             Collect and validators read the profile again.

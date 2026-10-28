@@ -1,6 +1,6 @@
 import { createClient } from "genlayer-js";
 import { studionet } from "genlayer-js/chains";
-import type { Call, Sighting } from "./types";
+import type { Call, FunderRow, Sighting } from "./types";
 import { TxError, classifyError, rawMessage } from "../utils/errors";
 import { withBackoff } from "../utils/retry";
 import { takeSlot } from "../utils/rateBudget";
@@ -103,6 +103,15 @@ class FieldCall {
 
   getCall = (id: string) => this.read<Call>("get_call", [id]);
   getSighting = (id: string) => this.read<Sighting>("get_sighting", [id]);
+  /** A call with its funders attached (they are stored outside the call record, read in pages of 200). */
+  getCallWithFunders = async (id: string): Promise<Call> => {
+    const call = await this.getCall(id);
+    const funders: FunderRow[] = [];
+    for (let offset = 0; offset < Number(call.n_funders ?? 0); offset += 200) {
+      funders.push(...(JSON.parse(await this.read<string>("get_funders", [id, offset, 200])) as FunderRow[]));
+    }
+    return { ...call, funders };
+  };
   sightingFor = (callId: string, observationId: string) => this.read<string>("sighting_for", [callId, observationId]);
   /** The whole registry in one contract call each (pages of 200). */
   getCalls = (offset = 0, limit = 200) => this.read<Call[]>("get_calls", [offset, limit]).then((v) => (Array.isArray(v) ? v : []));
@@ -138,6 +147,9 @@ class FieldCall {
   }
   close(callId: string, onProgress?: (p: TxProgress) => void) {
     return this.write("close", [callId], 0n, onProgress);
+  }
+  refund(callId: string, funder: string, onProgress?: (p: TxProgress) => void) {
+    return this.write("refund", [callId, funder], 0n, onProgress);
   }
 
   /**

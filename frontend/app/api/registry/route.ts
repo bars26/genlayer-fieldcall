@@ -8,7 +8,8 @@ import { DEFAULT_CONTRACT_ADDRESS } from "@/lib/config";
  * GenLayer Studio rate-limits per IP and counts contract reads (`gen_call`) in the same
  * 30-per-minute bucket as `eth_sendRawTransaction`. Reading the registry from the visitor's
  * browser would spend the budget the visitor needs for their own transactions, so it is read
- * here, with one `get_calls` and one `get_sightings` call per 200 items, and served from the CDN.
+ * here, with one `get_calls` and one `get_sightings` call per 200 items (plus each call's funders),
+ * and served from the CDN.
  */
 
 export const dynamic = "force-dynamic";
@@ -49,9 +50,18 @@ async function readAll(client: any, functionName: string): Promise<unknown[]> {
   }
 }
 
+async function fundersOf(client: any, call: any): Promise<unknown[]> {
+  const out: unknown[] = [];
+  for (let offset = 0; offset < Number(call.n_funders ?? 0); offset += PAGE) {
+    out.push(...JSON.parse(await read<string>(client, "get_funders", [call.id, offset, PAGE])));
+  }
+  return out;
+}
+
 async function load(): Promise<Snapshot> {
   const client: any = createClient({ chain: studionet, endpoint: RPC } as any);
-  const calls = await readAll(client, "get_calls");
+  const calls = (await readAll(client, "get_calls")) as any[];
+  for (const call of calls) call.funders = await fundersOf(client, call); // funders live outside the call record
   const sightings = await readAll(client, "get_sightings");
   return { calls, sightings, fetchedAt: new Date().toISOString() };
 }

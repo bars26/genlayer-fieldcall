@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CalendarDays, Camera, Eye, Loader2, MapPin, ShieldCheck, Users } from "lucide-react";
 import {
   formatGen,
+  funderRow,
   fundersOf,
   observationIdFrom,
   parseGen,
@@ -23,7 +24,7 @@ import { SightingCard } from "./SightingCard";
 import { Button } from "./ui/button";
 
 export function CallCard({ call, sightings, observations }: { call: Call; sightings: Sighting[]; observations: Record<string, Observation> }) {
-  const { isConnected } = useWallet();
+  const { address, isConnected } = useWallet();
   const { writeAsync, pending } = useFieldCallWrite();
   const [obsInput, setObsInput] = useState("");
   const [fundInput, setFundInput] = useState("1");
@@ -40,7 +41,9 @@ export function CallCard({ call, sightings, observations }: { call: Call; sighti
   const canClose = open && today > call.collect_until && wei(call.n_pending) === 0n;
   const obsId = observationIdFrom(obsInput);
   const fundWei = parseGen(fundInput);
-  const funders = Object.keys(fundersOf(call)).length;
+  const funders = Number(call.n_funders ?? 0);
+  const myFunding = funderRow(call, address);
+  const toReturn = fundersOf(call).filter((f) => !f.refunded);
   const mine = sightings.filter((s) => s.call_id === call.id).sort((a, b) => Number(b.id.split("_")[1]) - Number(a.id.split("_")[1]));
 
   return (
@@ -98,7 +101,11 @@ export function CallCard({ call, sightings, observations }: { call: Call; sighti
               <i className="inline-block h-2 w-2 rounded-full bg-[#C9D4C1] mr-1" />
               {formatGen(pot, 4)} free of {formatGen(funded, 4)} funded
             </span>
-            {wei(call.returned_total) > 0n && <span>{formatGen(call.returned_total, 4)} returned to funders</span>}
+            {!open && (
+              <span>
+                {formatGen(call.returned_total, 4)} of {formatGen(call.returnable, 4)} GEN returned to {String(call.n_refunded)}/{funders} funders
+              </span>
+            )}
           </div>
         </div>
 
@@ -175,6 +182,36 @@ export function CallCard({ call, sightings, observations }: { call: Call; sighti
           </div>
         </div>
         {!takesSightings && open && <p className="text-xs text-muted-foreground">Submissions closed on {call.collect_until}; anyone can now close the call and return the pot.</p>}
+        {!open && toReturn.length > 0 && (
+          <div className="rounded-lg bg-[#F1F4EC] px-3 py-2.5 space-y-2 text-sm">
+            <p>
+              Closed. Each funder gets back their share of {formatGen(call.returnable, 4)} GEN, in proportion to what they put in. Anyone can send a share,
+              always to that funder, one transaction each.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {myFunding && !myFunding.refunded && (
+                <Button size="sm" className="h-8" disabled={!!pending}
+                  onClick={() => writeAsync({ kind: "refund", callId: call.id, funder: myFunding.address }).catch(() => {})}>
+                  {pending === `refund:${call.id}:${myFunding.address.toLowerCase()}` && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Return my share
+                </Button>
+              )}
+              {toReturn
+                .filter((f) => f !== myFunding)
+                .slice(0, 6)
+                .map((f) => (
+                  <Button key={f.address} size="sm" variant="outline" className="h-8 mono text-xs" disabled={!isConnected || !!pending}
+                    onClick={() => writeAsync({ kind: "refund", callId: call.id, funder: f.address }).catch(() => {})}>
+                    {pending === `refund:${call.id}:${f.address.toLowerCase()}` && <Loader2 className="h-4 w-4 animate-spin" />}
+                    Return {f.address.slice(0, 6)}…{f.address.slice(-4)}
+                  </Button>
+                ))}
+              {toReturn.filter((f) => f !== myFunding).length > 6 && (
+                <span className="text-xs text-muted-foreground self-center">and {toReturn.filter((f) => f !== myFunding).length - 6} more</span>
+              )}
+            </div>
+          </div>
+        )}
 
         {mine.length > 0 && (
           <div className="space-y-2">

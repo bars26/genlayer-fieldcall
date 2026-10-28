@@ -17,6 +17,8 @@ SIGHTING_AWAITING = "awaiting_wallet"  # eligible, reward reserved until the obs
 SIGHTING_SETTLED = "settled"
 
 _MIN_REWARD = 10**17  # 0.1 GEN
+_MIN_FUND = 10**17  # 0.1 GEN: the smallest top-up, so a pot cannot be padded with dust funders
+_MAX_SUBMISSIONS = 3  # times one observation can be submitted to one call (an identification may change)
 _WINDOW_SECONDS = 600
 _DAY = 86400
 _COLLECT_DAYS = 30  # after a call ends: time for identifications to reach research grade and for observers to collect
@@ -50,6 +52,17 @@ class _Wallet:
 
 def _sha256(data) -> str:
     return hashlib.sha256(data if isinstance(data, bytes) else str(data).encode("utf-8")).hexdigest()
+
+
+def _valid_day(day: str) -> bool:
+    """A real calendar date written YYYY-MM-DD (2026-02-31 is not)."""
+    if not re.match(r"^\d{4}-\d{2}-\d{2}$", day):
+        return False
+    try:
+        datetime.strptime(day, "%Y-%m-%d")
+    except ValueError:
+        return False
+    return True
 
 
 def _day_seconds(day: str) -> int:
@@ -227,10 +240,11 @@ class Call:
     reserved: u256  # GEN reserved for eligible sightings not yet paid
     funded_total: u256
     paid_total: u256
-    returned_total: u256
-    funders_json: str  # {address: wei} in funding order, for the pro-rata return at closing
-    observers_json: str  # {inaturalist user id: sightings reserved or paid}
-    sighting_ids_json: str
+    returnable: u256  # set at closing: what goes back to the funders, pro rata
+    returned_total: u256  # returned so far (one refund per funder)
+    n_funders: u256
+    n_refunded: u256
+    n_sightings: u256
     n_eligible: u256
     n_paid: u256
     n_pending: u256  # sightings inside their response window
@@ -267,6 +281,12 @@ class FieldCall(gl.Contract):
     calls: TreeMap[str, Call]
     sightings: TreeMap[str, Sighting]
     by_observation: TreeMap[str, str]  # "call_id:observation_id" -> latest sighting id
+    # Per-call collections live in their own maps, so no write ever reads or rewrites a list that grows with use.
+    funds: TreeMap[str, u256]  # "call_id|0xfunder" -> wei put in
+    funder_at: TreeMap[str, str]  # "call_id|n" -> funder address, in funding order (for paged reads)
+    refunded: TreeMap[str, bool]  # "call_id|0xfunder" -> their share has been returned
+    observer_counts: TreeMap[str, u256]  # "call_id|inaturalist user id" -> sightings reserved or paid
+    submissions: TreeMap[str, u256]  # "call_id:observation_id" -> times submitted
     call_count: u256
     sighting_count: u256
 
@@ -290,9 +310,6 @@ class FieldCall(gl.Contract):
 
     def _list(self, raw: str) -> list:
         return json.loads(raw) if raw else []
-
-    def _map(self, raw: str) -> dict:
-        return json.loads(raw) if raw else {}
 
     def _call(self, call_id: str) -> Call:
         call_id = self._text(call_id)
@@ -331,8 +348,28 @@ class FieldCall(gl.Contract):
         self._pay(gl.message.sender_address, int(gl.message.value))
         return f"REFUNDED: {reason}"
 
+    def _fund_key(self, call: Call, address: str) -> str:
+        return f"{call.id}|{address.lower()}"
+
     def _is_funder(self, call: Call, address: Address) -> bool:
-        return address.as_hex.lower() in {k.lower() for k in self._map(call.funders_json)}
+        return int(self.funds.get(self._fund_key(call, address.as_hex), u256(0))) > 0
+
+    def _add_funds(self, call: Call, address: Address, value: int) -> None:
+        key = self._fund_key(call, address.as_hex)
+        before = int(self.funds.get(key, u256(0)))
+        if before == 0:
+            self.funder_at[f"{call.id}|{int(call.n_funders)}"] = address.as_hex
+            call.n_funders = u256(int(call.n_funders) + 1)
+        self.funds[key] = u256(before + value)
+        call.pot = u256(int(call.pot) + value)
+        call.funded_total = u256(int(call.funded_total) + value)
+
+    def _observer_count(self, call: Call, observer_id: str) -> int:
+        return int(self.observer_counts.get(f"{call.id}|{observer_id}", u256(0)))
+
+    def _count_observer(self, call: Call, observer_id: str, delta: int) -> None:
+        key = f"{call.id}|{observer_id}"
+        self.observer_counts[key] = u256(max(self._observer_count(call, observer_id) + delta, 0))
 
     def _window_open(self, s: Sighting) -> bool:
         return self._seconds(self._now()) - self._seconds(s.window_from) <= _WINDOW_SECONDS
@@ -455,8 +492,7 @@ class FieldCall(gl.Contract):
         ruling, code, why = result["ruling"], result["code"], str(result.get("why", ""))
         payee = _ZERO
         if ruling == "ELIGIBLE":
-            observers = self._map(call.observers_json)
-            counted = observers.get(facts["observer_id"], 0) - (1 if int(s.reward) > 0 else 0)
+            counted = self._observer_count(call, facts["observer_id"]) - (1 if int(s.reward) > 0 else 0)
             if facts.get("wallet"):
                 payee = Address(facts["wallet"])
             if counted >= int(call.per_observer):
@@ -488,9 +524,7 @@ class FieldCall(gl.Contract):
         call.pot = u256(int(call.pot) - reward)
         call.reserved = u256(int(call.reserved) + reward)
         s.reward = u256(reward)
-        observers = self._map(call.observers_json)
-        observers[observer_id] = observers.get(observer_id, 0) + 1
-        call.observers_json = json.dumps(observers, sort_keys=True)
+        self._count_observer(call, observer_id, 1)
 
     def _release(self, s: Sighting, call: Call) -> None:
         reward = int(s.reward)
@@ -499,9 +533,7 @@ class FieldCall(gl.Contract):
         call.pot = u256(int(call.pot) + reward)
         call.reserved = u256(int(call.reserved) - reward)
         s.reward = u256(0)
-        observers = self._map(call.observers_json)
-        observers[s.observer_id] = max(observers.get(s.observer_id, 0) - 1, 0)
-        call.observers_json = json.dumps(observers, sort_keys=True)
+        self._count_observer(call, s.observer_id, -1)
 
     def _payout(self, s: Sighting, call: Call) -> None:
         reward = int(s.reward)
@@ -531,8 +563,8 @@ class FieldCall(gl.Contract):
             return self._reject("taxon_id must be an iNaturalist taxon id, like 119019")
         if not re.match(r"^\d{1,9}$", place_id):
             return self._reject("place_id must be an iNaturalist place id, like 6857")
-        if not re.match(r"^\d{4}-\d{2}-\d{2}$", starts) or not re.match(r"^\d{4}-\d{2}-\d{2}$", ends):
-            return self._reject("starts and ends must be YYYY-MM-DD dates")
+        if not _valid_day(starts) or not _valid_day(ends):
+            return self._reject("starts and ends must be real calendar dates written YYYY-MM-DD")
         if ends < starts or ends < self._today():
             return self._reject("ends must be on or after starts, and not in the past")
         if _day_seconds(ends) - _day_seconds(starts) > _MAX_WINDOW_DAYS * _DAY:
@@ -576,11 +608,12 @@ class FieldCall(gl.Contract):
             collect_until=_day(_day_seconds(ends) + _COLLECT_DAYS * _DAY), reward=u256(int(reward_txt)),
             per_observer=u256(numbers["per_observer"]), research_only=bool(research_only),
             min_account_days=u256(numbers["min_account_days"]), max_accuracy_m=u256(numbers["max_accuracy_m"]),
-            condition=condition, state=CALL_OPEN, pot=u256(value), reserved=u256(0), funded_total=u256(value),
-            paid_total=u256(0), returned_total=u256(0), funders_json=json.dumps({sender.as_hex: str(value)}),
-            observers_json="{}", sighting_ids_json="[]", n_eligible=u256(0), n_paid=u256(0), n_pending=u256(0),
+            condition=condition, state=CALL_OPEN, pot=u256(0), reserved=u256(0), funded_total=u256(0),
+            paid_total=u256(0), returnable=u256(0), returned_total=u256(0), n_funders=u256(0), n_refunded=u256(0),
+            n_sightings=u256(0), n_eligible=u256(0), n_paid=u256(0), n_pending=u256(0),
             created_at=self._now()[:19], history_json="[]",
         )
+        self._add_funds(call, sender, value)
         self.call_count = u256(int(self.call_count) + 1)
         self._log(call, "created", amount=str(value))
         self.calls[call_id] = call
@@ -588,7 +621,8 @@ class FieldCall(gl.Contract):
 
     @gl.public.write.payable
     def fund(self, call_id: str) -> str:
-        """Anyone adds GEN to a call's pot. What is left when the call closes returns to funders pro rata."""
+        """Anyone adds GEN (at least 0.1) to a call's pot. What is left when the call closes returns to the funders
+        pro rata, one refund per funder."""
         call_id = self._text(call_id)
         if call_id not in self.calls:
             return self._reject(f"No call with id {call_id}")
@@ -596,14 +630,9 @@ class FieldCall(gl.Contract):
         if call.state != CALL_OPEN or self._today() > call.ends:
             return self._reject("This call no longer takes funding")
         value = int(gl.message.value)
-        if value <= 0:
-            return self._reject("Send some GEN to fund the call")
-        funders = self._map(call.funders_json)
-        key = gl.message.sender_address.as_hex
-        funders[key] = str(int(funders.get(key, "0")) + value)
-        call.funders_json = json.dumps(funders)
-        call.pot = u256(int(call.pot) + value)
-        call.funded_total = u256(int(call.funded_total) + value)
+        if value < _MIN_FUND:
+            return self._reject("Send at least 0.1 GEN to fund the call")
+        self._add_funds(call, gl.message.sender_address, value)
         self._log(call, "funded", amount=str(value))
         return "funded"
 
@@ -624,6 +653,9 @@ class FieldCall(gl.Contract):
                 raise gl.vm.UserError(f"{prior.id} for this observation is still open")
             if prior.ruling == "ELIGIBLE":
                 raise gl.vm.UserError(f"This observation has already earned its reward ({prior.id})")
+        times = int(self.submissions.get(key, u256(0)))
+        if times >= _MAX_SUBMISSIONS:
+            raise gl.vm.UserError(f"This observation has been submitted to this call {_MAX_SUBMISSIONS} times")
         if int(call.pot) < int(call.reward):
             raise gl.vm.UserError("This call's pot is empty")
 
@@ -638,9 +670,8 @@ class FieldCall(gl.Contract):
         self._step(s, "submitted", ruling=s.ruling, code=s.code, evidence=self._list(s.evidence_json)[-1]["packet_sha256"])
         self.sighting_count = u256(int(self.sighting_count) + 1)
         self.by_observation[key] = sighting_id
-        ids = self._list(call.sighting_ids_json)
-        ids.append(sighting_id)
-        call.sighting_ids_json = json.dumps(ids)
+        self.submissions[key] = u256(times + 1)
+        call.n_sightings = u256(int(call.n_sightings) + 1)
         call.n_pending = u256(int(call.n_pending) + 1)
         self._log(call, "sighting_submitted", sighting=sighting_id, observation=observation_id, ruling=s.ruling)
         self.sightings[sighting_id] = s
@@ -718,6 +749,8 @@ class FieldCall(gl.Contract):
         if s.state != SIGHTING_AWAITING:
             raise gl.vm.UserError("Only a held reward can be collected")
         call = self.calls[s.call_id]
+        if call.state != CALL_OPEN:
+            raise gl.vm.UserError("This call is closed: the held reward expired and was returned to the funders")
         if self._today() > call.collect_until:
             raise gl.vm.UserError(f"Rewards for this call could be collected until {call.collect_until}")
         observer_id = s.observer_id
@@ -742,8 +775,9 @@ class FieldCall(gl.Contract):
 
     @gl.public.write
     def close(self, call_id: str) -> str:
-        """After the collect date, anyone closes a call: held rewards nobody collected return to the pot, and the
-        pot returns to the funders in proportion to what each put in."""
+        """After the collect date, anyone closes a call. Held rewards nobody collected expire, and the pot plus those
+        rewards becomes returnable to the funders, each of whom is then repaid by `refund`. Closing does a fixed
+        amount of work however many sightings or funders the call has. Returns the returnable amount in wei."""
         call = self._call(call_id)
         if call.state != CALL_OPEN:
             raise gl.vm.UserError("This call is already closed")
@@ -751,26 +785,41 @@ class FieldCall(gl.Contract):
             raise gl.vm.UserError(f"Sightings can be submitted and rewards collected until {call.collect_until}")
         if int(call.n_pending) > 0:
             raise gl.vm.UserError("Settle the open sightings first")
-        for sid in self._list(call.sighting_ids_json):
-            s = self.sightings[sid]
-            if s.state == SIGHTING_AWAITING:
-                call.pot = u256(int(call.pot) + int(s.reward))
-                call.reserved = u256(int(call.reserved) - int(s.reward))
-                s.reward = u256(0)
-                s.state, s.outcome = SIGHTING_SETTLED, "expired"
-                self._step(s, "expired")
-        pot, total = int(call.pot), int(call.funded_total)
-        funders = list(self._map(call.funders_json).items())
-        sent = 0
-        for i, (who, amount) in enumerate(funders):
-            share = pot - sent if i == len(funders) - 1 else pot * int(amount) // total
-            sent += share
-            self._pay(Address(who), share)
-        call.returned_total = u256(pot)
-        call.pot = u256(0)
+        expired = int(call.reserved)  # nothing is pending, so every reserved reward is a held one nobody collected
+        returnable = int(call.pot) + expired
+        call.returnable = u256(returnable)
+        call.pot, call.reserved = u256(0), u256(0)
         call.state = CALL_CLOSED
-        self._log(call, "closed", returned=str(pot))
-        return str(pot)
+        self._log(call, "closed", returnable=str(returnable), expired=str(expired))
+        return str(returnable)
+
+    @gl.public.write
+    def refund(self, call_id: str, funder: str) -> str:
+        """Return one funder's share of a closed call: returnable x (their funding / all funding). Anyone can send
+        it, to the funder only; the last funder repaid also receives the rounding remainder. Returns the share in wei."""
+        call = self._call(call_id)
+        if call.state != CALL_CLOSED:
+            raise gl.vm.UserError("Close the call first")
+        funder = self._text(funder)
+        if not re.match(r"^0x[0-9a-fA-F]{40}$", funder):
+            raise gl.vm.UserError("funder must be a 0x address")
+        key = self._fund_key(call, funder)
+        amount = int(self.funds.get(key, u256(0)))
+        if amount == 0:
+            raise gl.vm.UserError(f"{funder} did not fund {call.id}")
+        if self.refunded.get(key, False):
+            raise gl.vm.UserError(f"{funder}'s share of {call.id} has already been returned")
+        returnable, returned = int(call.returnable), int(call.returned_total)
+        if int(call.n_refunded) + 1 == int(call.n_funders):
+            share = returnable - returned
+        else:
+            share = returnable * amount // int(call.funded_total)
+        self.refunded[key] = True
+        call.n_refunded = u256(int(call.n_refunded) + 1)
+        call.returned_total = u256(returned + share)
+        self._pay(Address(funder), share)
+        self._log(call, "refunded", funder=Address(funder).as_hex, amount=str(share))
+        return str(share)
 
     # --- views ---------------------------------------------------------------
 
@@ -806,15 +855,48 @@ class FieldCall(gl.Contract):
         call = self._call(call_id)
         return json.dumps({
             "pot": str(int(call.pot)), "reserved": str(int(call.reserved)), "paid": str(int(call.paid_total)),
-            "funded": str(int(call.funded_total)), "returned": str(int(call.returned_total)),
+            "funded": str(int(call.funded_total)), "returnable": str(int(call.returnable)),
+            "returned": str(int(call.returned_total)), "funders": int(call.n_funders), "refunded": int(call.n_refunded),
             "rewards_left": int(call.pot) // int(call.reward), "state": call.state, "collect_until": call.collect_until,
         }, sort_keys=True)
 
     @gl.public.view
+    def get_funders(self, call_id: str, offset: int, limit: int) -> str:
+        """Up to 200 of a call's funders, in funding order: address, wei put in, and whether their share was returned."""
+        call = self._call(call_id)
+        start, count = max(int(offset), 0), max(min(int(limit), 200), 0)
+        end = min(int(call.n_funders), start + count)
+        rows = []
+        for i in range(start, end):
+            who = self.funder_at[f"{call.id}|{i}"]
+            key = self._fund_key(call, who)
+            rows.append({"address": who, "amount": str(int(self.funds[key])), "refunded": bool(self.refunded.get(key, False))})
+        return json.dumps(rows)
+
+    @gl.public.view
+    def funding_of(self, address: str) -> str:
+        """What one wallet put into each call ({call_id: {amount, refunded}}), for a frontend's funder actions."""
+        address = self._text(address)
+        out = {}
+        for i in range(int(self.call_count)):
+            call = self.calls[f"call_{i}"]
+            key = self._fund_key(call, address)
+            amount = int(self.funds.get(key, u256(0)))
+            if amount:
+                out[call.id] = {"amount": str(amount), "refunded": bool(self.refunded.get(key, False))}
+        return json.dumps(out, sort_keys=True)
+
+    @gl.public.view
     def totals(self) -> str:
-        """What the contract should hold: open calls' pots plus reserved rewards (for balance reconciliation)."""
-        held = sum(int(self.calls[f"call_{i}"].pot) + int(self.calls[f"call_{i}"].reserved)
-                   for i in range(int(self.call_count)) if self.calls[f"call_{i}"].state == CALL_OPEN)
+        """What the contract should hold: open calls' pots and reserved rewards, plus what closed calls have not yet
+        returned to their funders (for balance reconciliation)."""
+        held = 0
+        for i in range(int(self.call_count)):
+            call = self.calls[f"call_{i}"]
+            if call.state == CALL_OPEN:
+                held += int(call.pot) + int(call.reserved)
+            else:
+                held += int(call.returnable) - int(call.returned_total)
         return json.dumps({"expected_balance": str(held)})
 
     @gl.public.view

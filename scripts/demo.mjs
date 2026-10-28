@@ -24,14 +24,22 @@ function client(account) {
 }
 
 async function rpc(method, params) {
-  const res = await fetch(RPC, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-  });
-  const body = await res.json();
-  if (body.error) throw new Error(`${method}: ${body.error.message}`);
-  return body.result;
+  // Studio sometimes answers with an HTML error page; these calls are reads or idempotent top-ups, so retry them.
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const res = await fetch(RPC, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+      });
+      const body = await res.json();
+      if (body.error) throw new Error(`${method}: ${body.error.message}`);
+      return body.result;
+    } catch (err) {
+      if (attempt >= 5 || /^\w+: /.test(String(err?.message))) throw err;
+      await new Promise((r) => setTimeout(r, 10000 * attempt));
+    }
+  }
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -195,11 +203,14 @@ await open(A, "sponsor", "Asian hornet nests, UK", HORNET, "999999999", "2026-08
 await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", "2026-09-30", GEN / 2n, 2, true, 30, 100, NEST, 2n * GEN); // already ended
 await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN / 20n, 2, true, 30, 100, NEST, 2n * GEN); // reward below 0.1 GEN
 await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN, 2, true, 30, 100, NEST, GEN / 2n); // pot smaller than one reward
+await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-02-31", ENDS, GEN / 2n, 2, true, 30, 100, NEST, 2n * GEN); // no such calendar date
+await reconcile("after the refused calls: the contract kept nothing");
 
 // Call 0: nests only. Validators look at the photos.
 console.log("");
 await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, 2n * GEN);
 await write(B, "cofunder", "fund", [cid(0)], GEN);
+await write(X, "bystander", "fund", [cid(0)], GEN / 20n); // below the 0.1 GEN minimum top-up: sent back
 const nest = await submit("scout", S, cid(0), "397236824", "a nest in a tree, Romsey");
 const adult = await submit("scout", S, cid(0), "397236834", "an adult hornet on a branch");
 const crabro = await submit("scout", S, cid(0), "411158753", "a European hornet, the native lookalike");
@@ -212,6 +223,13 @@ await rulingOf(nest, "nest after the co-funder's contest");
 await write(S, "scout", "contest", [crabro]); // the scout answers back on the lookalike
 await rulingOf(crabro, "European hornet after the scout's contest");
 await write(S, "scout", "settle", [adult]); // the scout accepts the adult's ruling at once
+// One observation can be submitted to a call at most three times (an identification may change in between).
+await write(S, "scout", "settle", [france]); // the scout accepts the refusal at once
+const france2 = await submit("scout", S, cid(0), "411204951", "the French record again");
+await write(S, "scout", "settle", [france2]);
+const france3 = await submit("scout", S, cid(0), "411204951", "the French record a third time");
+await write(S, "scout", "settle", [france3]);
+await write(S, "scout", "submit", [cid(0), "411204951"], 0n, { expectError: true }); // a fourth time is refused
 await reconcile("call 0 open, the nest's reward reserved");
 
 // Call 1: any sighting, at most two per observer.
@@ -227,7 +245,7 @@ await reconcile("both calls open");
 
 console.log("\nwaiting 10 minutes for the response windows...");
 await sleep(630_000);
-for (const id of [nest, crabro, france, old, s2, s3]) await write(X, "bystander", "settle", [id]);
+for (const id of [nest, crabro, old, s2, s3]) await write(X, "bystander", "settle", [id]);
 await write(S, "scout", "submit", [cid(0), "397236824"], 0n, { expectError: true }); // already earned its reward
 await reconcile("end of run");
 

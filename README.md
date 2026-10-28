@@ -30,14 +30,14 @@ FieldCall turns that into a contract:
    reward **held** until the call's collect date; they add a `0x…` address to their profile and anyone presses **Collect**.
 5. The side a ruling goes against has **10 minutes** to ask once for a fresh reading (an identification can change). Every
    ruling stores a **plain-English reason**, a **timeline** and an **evidence packet** with sha256 hashes of what was read,
-   including each photo looked at. When the call's collect date passes, anyone **closes** it and the rest of the pot returns
-   to the funders, in proportion to what each put in.
+   including each photo looked at. When the call's collect date passes, anyone **closes** it, and anyone can then **return
+   each funder's share** of what is left, in proportion to what they put in, one funder per transaction.
 
 **Live app:** [fieldcall-bars26.vercel.app](https://fieldcall-bars26.vercel.app). Paste any iNaturalist observation and see,
 without a wallet, which open calls it would earn and why. Writes need MetaMask on GenLayer Studio (chain 61999); **Test GEN**
 funds your wallet.
 
-**Contract:** [`0x0F8709541c0ae378A2E1a1958032d7CaE3f269Dc`](https://explorer-studio.genlayer.com/address/0x0F8709541c0ae378A2E1a1958032d7CaE3f269Dc) on GenLayer Studio.
+**Contract:** [`0x58576b0a8C0091b8E7E276EDCa9b5D2d9bC826aE`](https://explorer-studio.genlayer.com/address/0x58576b0a8C0091b8E7E276EDCa9b5D2d9bC826aE) on GenLayer Studio.
 
 ## Why GenLayer
 
@@ -64,9 +64,10 @@ reconciliation are in [`docs/REPRODUCTION.md`](docs/REPRODUCTION.md).
 | **Asian hornet sightings, UK**, 0.25 GEN, 2 per observer | three adults by the same observer | **Qualifies, qualifies, then refused**: the observer reached the call's limit of 2 |
 
 Also refused on-chain, with the GEN sent back: a taxon name instead of an id, a taxon and a place iNaturalist does not have, a
-call that has already ended, a reward below 0.1 GEN, a pot smaller than one reward. And refused by the contract: submitting an
-observation that is already open or already earned its reward, a scout paying out early (only a funder can), collecting a held
-reward before the observer links a wallet, and closing a call before its collect date. The contract's balance was reconciled
+call that has already ended, a reward below 0.1 GEN, a pot smaller than one reward, a start date of 2026-02-31, and a 0.05 GEN
+top-up (below the 0.1 GEN minimum). And refused by the contract: submitting an observation that is already open, already earned
+its reward, or was already submitted three times; a scout paying out early (only a funder can); collecting a held reward before
+the observer links a wallet; and closing a call before its collect date. The contract's balance was reconciled
 with `totals()` (open pots plus reserved rewards) at three points of the run, each time after every transfer had finalized.
 
 **From the live app with MetaMask:** a tester opened a third call from the *Live hedgehogs, UK* preset (photo condition
@@ -88,7 +89,9 @@ Transactions in [`docs/REPRODUCTION.md`](docs/REPRODUCTION.md#wallet-test-from-t
 | Early settlement only against your own interest (a funder pays now, the submitter accepts a refusal) | The submitter cannot rush a payout; funders cannot rush a refusal |
 | iNaturalist outages, unreadable profiles and photos are `UNCLEAR`: nothing reserved, submit again | An outage never decides a sighting |
 | Held rewards wait until the collect date (call end + 30 days), then return to the pot; the pot returns to funders pro rata | Money never strands; observers who join late still get paid |
-| Payable calls never revert; they refund and return `REFUNDED: <reason>` | GenLayer keeps the value of a reverted call |
+| Closing does a fixed amount of work; each funder's share is then returned by its own `refund` transaction, which anyone can send (always to that funder) | No call can grow so large that closing it runs out of gas and strands the funders' GEN |
+| Funders, observer counts and submission counts live in their own maps, never in a list on the call; top-ups are at least 0.1 GEN; one observation can be submitted to a call at most 3 times | Spam cannot make any write more expensive than the first one |
+| Payable calls never revert; they refund and return `REFUNDED: <reason>`, including for dates that do not exist (2026-02-31) | GenLayer keeps the value of a reverted call |
 
 ## The app
 
@@ -109,7 +112,7 @@ Transactions in [`docs/REPRODUCTION.md`](docs/REPRODUCTION.md#wallet-test-from-t
 ```bash
 pip install -r requirements.txt
 genvm-lint check contracts/field_call.py
-pytest tests/direct/ -v                     # 48 tests: iNaturalist, profiles, photos and the LLM mocked
+pytest tests/direct/ -v                     # 55 tests: iNaturalist, profiles, photos and the LLM mocked
 
 npm install
 node scripts/deploy.mjs
@@ -119,6 +122,19 @@ node scripts/reproduction.mjs               # regenerate docs/REPRODUCTION.md
 
 cd frontend && cp .env.example .env.local && npm run dev
 ```
+
+## Changes in v1.1 (after steward review)
+
+- **Closing cannot be blocked by size.** v1.0's `close()` looped over every sighting and every funder in one transaction, and
+  both lists could be padded cheaply. Now `close()` only moves the pot and the expired held rewards into `returnable`; every
+  funder is then repaid by `refund(call_id, funder)`, one bounded transaction each, sent by anyone, in any order, with the
+  last one taking the rounding remainder. Funders, per-observer counts and submission counts moved out of the call record into
+  their own maps, top-ups are at least 0.1 GEN, and an observation can be submitted to a call at most three times.
+  `test_stress_hundreds_of_funders_and_refused_sightings_still_close_and_repay_everyone` pads a call with 301 funders and 120
+  refused submissions, checks that `close()` reads no sighting and no funder, then repays all 301 and checks every wei left.
+- **Impossible dates are refunded.** `create_call` checks that `starts` and `ends` are real calendar dates before any date
+  arithmetic, so `2026-02-31` returns `REFUNDED: ...` with the GEN, instead of raising and keeping it; covered by tests that
+  record every transfer and by the live run.
 
 ## Limits, stated plainly
 

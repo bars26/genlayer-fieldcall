@@ -83,6 +83,16 @@ observer's profile text (where the wallet address is read), and for photo condit
 - **sighting_6**: 2026-10-27T23:18:23 submitted → ELIGIBLE · 2026-10-27T23:31:06 held 0.25 GEN until 2027-01-25
 - **sighting_7**: 2026-10-27T23:18:36 submitted → INELIGIBLE · 2026-10-27T23:31:17 settled → INELIGIBLE
 
+## Wallet test from the live app
+
+MetaMask test from the production app (fieldcall-bars26.vercel.app): the tester opens a call from the "Live hedgehogs, UK" preset (Erinaceus europaeus, United Kingdom, sightings 2026-08-01 to 2026-12-27, 0.5 GEN each, 2 per observer, research grade, accounts at least 30 days old, located to 100 m, photo condition "The photo shows a living hedgehog") and submits three real iNaturalist observations, each chosen to reach a different rule. None of the three observers has a wallet in their profile, so the qualifying reward is held for its observer. Wallet `0x4f80b5c475fced34fc9a07ffccf39e1adc1406bf`. Every transaction is FINALIZED with execution result SUCCESS.
+
+| Step | GEN sent | Result | Tx |
+|---|---|---|---|
+| Open a call: Live hedgehogs, UK, funded with 2 GEN | 2 GEN | call_2 open; validators read taxon 43042 and place 6857 from iNaturalist | [`0x659c8132…`](https://explorer-studio.genlayer.com/tx/0x659c8132695b2e2fe9d24b91993c9f7a08430d95ed78f5aeb6aa1153f562000d) |
+| Submit observation 403107732 (a hedgehog walking on a road, Marlow) |  | sighting_8 ELIGIBLE: validators looked at the photo, MEETS; 0.5 GEN reserved, held for jennwren (no wallet in profile) | [`0xd915ee5c…`](https://explorer-studio.genlayer.com/tx/0xd915ee5ce18d18a4a6be308336f7b9f9c109ddfea146b960c46e9c039b17a19b) |
+| Submit observation 402415645 (a dead hedgehog in leaf litter, Clydebank) |  | sighting_9 INELIGIBLE (condition_not_met): validators looked at the photo, NOT_MEETS | [`0xcebcfe8d…`](https://explorer-studio.genlayer.com/tx/0xcebcfe8dfba46dc506b2bb06921b19b0ef6c054aa977644815916c4bd97deb83) |
+| Submit observation 405948698 (a live hedgehog in a garden, Spalding) |  | sighting_10 INELIGIBLE (new_account): the observer's account was opened 2026-10-03, two days before the sighting; decided in code, no photo read | [`0x4e8ee9d7…`](https://explorer-studio.genlayer.com/tx/0x4e8ee9d7d9d7aa1952b527544e4cfe1314c30a097a1cd0d3edaea98cf5c34777) |
 
 ## Every transaction
 

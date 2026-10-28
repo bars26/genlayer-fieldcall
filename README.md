@@ -69,6 +69,12 @@ observation that is already open or already earned its reward, a scout paying ou
 reward before the observer links a wallet, and closing a call before its collect date. The contract's balance was reconciled
 with `totals()` (open pots plus reserved rewards) at three points of the run, each time after every transfer had finalized.
 
+**From the live app with MetaMask:** a tester opened a third call from the *Live hedgehogs, UK* preset (photo condition
+*"The photo shows a living hedgehog"*) and submitted three real observations: a hedgehog walking on a road **qualified**
+(validators looked: `MEETS`, reward held for its observer), a dead hedgehog **did not** (`NOT_MEETS`), and a live hedgehog
+whose observer opened their account two days before the sighting **did not** (the call requires 30 days; decided in code).
+Transactions in [`docs/REPRODUCTION.md`](docs/REPRODUCTION.md#wallet-test-from-the-live-app).
+
 ## Who can do what (and the attacks this blocks)
 
 | Rule | Why |

@@ -4,25 +4,24 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import FieldCall, { type CreateCallInput, type TxProgress, type TxResult } from "../contracts/FieldCall";
 import { formatGen, isFunder, sameAddress, todayUtc, wei, windowLeftSeconds, RULING_STYLE, factsOf, type Call, type Ruling, type Sighting } from "../contracts/types";
-import { getContractAddress, getStudioUrl } from "../genlayer/client";
+import { isOnGenLayerNetwork, switchToGenLayerNetwork } from "../genlayer/client";
 import { useWallet } from "../genlayer/wallet";
+import { currentNetwork } from "../network";
 import { TxError, classifyError } from "../utils/errors";
 import { error, success } from "../utils/toast";
 import { startTx, updateTx, type TxKind } from "./useTxLog";
 
 export function useFieldCallContract(): FieldCall | null {
   const { address } = useWallet();
-  const contractAddress = getContractAddress();
-  const studioUrl = getStudioUrl();
-  return useMemo(
-    () => (contractAddress ? new FieldCall(contractAddress, address, studioUrl) : null),
-    [contractAddress, address, studioUrl]
-  );
+  const network = currentNetwork();
+  return useMemo(() => (/^0x[0-9a-fA-F]{40}$/.test(network.contract) ? new FieldCall(network, address) : null), [network, address]);
 }
+
+const registryKey = () => ["registry", currentNetwork().id];
 
 type Registry = { calls: Call[]; sightings: Sighting[]; fetchedAt?: string };
 
-async function fetchJson(url: string, timeoutMs = 25_000) {
+async function fetchJson(url: string, timeoutMs = 60_000) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   const res = await fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(timer));
@@ -38,10 +37,10 @@ async function fetchJson(url: string, timeoutMs = 25_000) {
 export function useRegistry() {
   const contract = useFieldCallContract();
   const query = useQuery<Registry, Error>({
-    queryKey: ["registry"],
+    queryKey: registryKey(),
     queryFn: async () => {
       try {
-        const body = await fetchJson("/api/registry");
+        const body = await fetchJson(`/api/registry?network=${currentNetwork().id}`);
         if (!Array.isArray(body.calls) || !Array.isArray(body.sightings)) throw new Error("Malformed snapshot");
         return body as Registry;
       } catch (snapshotErr) {
@@ -74,7 +73,7 @@ async function mergeFresh(qc: ReturnType<typeof useQueryClient>, contract: Field
       callId ? contract.getCallWithFunders(callId) : Promise.resolve(null),
       sightingId ? contract.getSighting(sightingId) : Promise.resolve(null),
     ]);
-    qc.setQueryData<Registry>(["registry"], (prev) => {
+    qc.setQueryData<Registry>(registryKey(), (prev) => {
       let calls = prev?.calls ?? [];
       let sightings = prev?.sightings ?? [];
       if (call) calls = calls.some((c) => c.id === call.id) ? calls.map((c) => (c.id === call.id ? call : c)) : [...calls, call];
@@ -95,7 +94,8 @@ export type WriteVars =
   | { kind: "settle"; sightingId: string }
   | { kind: "collect"; sightingId: string }
   | { kind: "close"; callId: string }
-  | { kind: "refund"; callId: string; funder: string };
+  | { kind: "refund"; callId: string; funder: string }
+  | { kind: "withdraw" };
 
 export const WRITE_LABEL: Record<TxKind, string> = {
   create: "Open a call",
@@ -105,7 +105,8 @@ export const WRITE_LABEL: Record<TxKind, string> = {
   settle: "Settle",
   collect: "Collect a held reward",
   close: "Close the call",
-  refund: "Return a funder's share",
+  refund: "Credit a funder's share",
+  withdraw: "Withdraw your GEN",
 };
 
 const rulingNote = (v: unknown, s?: Sighting) => {
@@ -124,7 +125,9 @@ export function useFieldCallWrite() {
   const mutation = useMutation({
     mutationFn: async (vars: WriteVars) => {
       const target =
-        vars.kind === "create"
+        vars.kind === "withdraw"
+          ? "your credited GEN"
+          : vars.kind === "create"
           ? vars.input.title
           : vars.kind === "submit"
             ? `${vars.callId} ← observation ${vars.observationId}`
@@ -133,8 +136,8 @@ export function useFieldCallWrite() {
               : vars.callId;
       const logId = startTx(vars.kind, target);
       setPending(
-        vars.kind === "create"
-          ? "create"
+        vars.kind === "create" || vars.kind === "withdraw"
+          ? vars.kind
           : vars.kind === "refund"
             ? `refund:${vars.callId}:${vars.funder.toLowerCase()}`
             : `${vars.kind}:${"sightingId" in vars ? vars.sightingId : vars.callId}`
@@ -151,6 +154,16 @@ export function useFieldCallWrite() {
       try {
         if (!contract) throw new TxError({ kind: "unknown", phase: "send", message: "The contract address is not configured." });
         if (!address) throw new TxError({ kind: "wallet_missing", phase: "send", message: "No wallet is connected." });
+        // A wallet that was already connected keeps whatever chain it was on: ask MetaMask to switch first.
+        if (!(await isOnGenLayerNetwork())) {
+          try {
+            await switchToGenLayerNetwork();
+          } catch (err) {
+            throw classifyError(err, "send");
+          }
+        }
+        const bradbury = contract.network.id === "bradbury";
+        const owedBefore = ["create", "fund", "withdraw"].includes(vars.kind) ? await contract.owedTo(address) : 0n;
 
         let result: TxResult;
         let callId = "callId" in vars ? vars.callId : undefined;
@@ -159,7 +172,13 @@ export function useFieldCallWrite() {
         // Re-read right before sending, so a stale list never sends a call the contract would refuse.
         switch (vars.kind) {
           case "create":
+            // v2: a call is funded from credit, so opening it (which needs a reading) never carries GEN.
+            if (owedBefore < vars.fund) {
+              onProgress({ step: "awaiting_wallet", message: "First, deposit the call's funds: approve it in your wallet." });
+              await contract.deposit(vars.fund - owedBefore, onProgress);
+            }
             result = await contract.createCall(vars.input, vars.fund, onProgress);
+            if (bradbury) result.returned = (await contract.getCalls()).filter((c) => sameAddress(c.sponsor, address) && c.title === vars.input.title.trim()).at(-1)?.id;
             callId = typeof result.returned === "string" ? result.returned : undefined;
             note = callId ? `${callId} is open for sightings.` : "Call opened.";
             break;
@@ -167,6 +186,8 @@ export function useFieldCallWrite() {
             const c = await contract.getCall(vars.callId);
             if (c.state !== "open" || todayUtc() > c.ends) refuse("This call no longer takes funding.");
             result = await contract.fund(vars.callId, vars.value, onProgress);
+            if (bradbury && (await contract.owedTo(address)) >= owedBefore + vars.value)
+              refuse("The contract refused this top-up and credited your GEN back; withdraw it from “Your GEN in FieldCall”.");
             note = "Added to the pot. Whatever is left when the call closes returns to funders in proportion.";
             break;
           }
@@ -181,7 +202,8 @@ export function useFieldCallWrite() {
               if (s.ruling === "ELIGIBLE") refuse(`This observation has already earned its reward (${s.id}).`);
             }
             result = await contract.submit(vars.callId, vars.observationId, onProgress);
-            sightingId = typeof result.returned === "string" ? result.returned : undefined;
+            if (bradbury) result.returned = await contract.sightingFor(vars.callId, vars.observationId);
+            sightingId = typeof result.returned === "string" && result.returned ? result.returned : undefined;
             if (sightingId) {
               const s = await contract.getSighting(sightingId);
               note = `${sightingId}: ${rulingNote(s.ruling, s)}`;
@@ -215,9 +237,10 @@ export function useFieldCallWrite() {
               if (s.ruling !== "ELIGIBLE" && !sameAddress(s.submitter, address)) refuse("Until the window ends, only the submitter can accept this ruling.");
             }
             result = await contract.settle(vars.sightingId, onProgress);
+            if (bradbury) result.returned = (await contract.getSighting(vars.sightingId)).outcome;
             note =
               result.returned === "paid"
-                ? "The reward was paid to the wallet in the observer's iNaturalist profile."
+                ? "The reward was credited to the wallet in the observer's iNaturalist profile; that wallet takes it out with Withdraw."
                 : result.returned === "awaiting_wallet"
                   ? `The reward is held until ${c.collect_until}: once the observer adds a wallet to their iNaturalist profile, anyone can press Collect.`
                   : "Closed; nothing was reserved.";
@@ -230,7 +253,7 @@ export function useFieldCallWrite() {
             const c = await contract.getCall(s.call_id);
             if (c.state !== "open") refuse("This call is closed: the held reward expired and went back to the funders.");
             result = await contract.collect(vars.sightingId, onProgress);
-            note = "Paid to the wallet now in the observer's iNaturalist profile.";
+            note = "Credited to the wallet now in the observer's iNaturalist profile; it takes the GEN out with Withdraw.";
             break;
           }
           case "close": {
@@ -249,9 +272,14 @@ export function useFieldCallWrite() {
             if (!row) refuse("That wallet did not fund this call.");
             if (row?.refunded) refuse("That funder's share has already been returned.");
             result = await contract.refund(vars.callId, vars.funder, onProgress);
-            note = `${formatGen(String(result.returned ?? "0"), 4)} GEN returned to ${vars.funder.slice(0, 6)}…${vars.funder.slice(-4)}.`;
+            note = `${vars.funder.slice(0, 6)}…${vars.funder.slice(-4)}'s share is credited; they take it out with Withdraw.`;
             break;
           }
+          case "withdraw":
+            if (owedBefore === 0n) refuse("Nothing is credited to this wallet.");
+            result = await contract.withdraw(onProgress);
+            note = `${formatGen(owedBefore, 4)} GEN sent to your wallet${bradbury ? " (it arrives about a minute after the transaction finalizes)" : ""}.`;
+            break;
         }
         updateTx(logId, { state: "accepted", txHash: result.txHash, status: result.status, executionResult: result.executionResult, progress: note });
         return { callId, sightingId, txHash: result.txHash, kind: vars.kind, note };
@@ -272,6 +300,7 @@ export function useFieldCallWrite() {
     onSuccess: ({ callId, sightingId, txHash, kind, note }) => {
       if (contract) mergeFresh(qc, contract, callId, sightingId);
       qc.invalidateQueries({ queryKey: ["genBalance"] });
+      qc.invalidateQueries({ queryKey: ["owed"] });
       success(`${WRITE_LABEL[kind]} confirmed`, {
         description: `${note} Tx ${txHash.slice(0, 10)}... is ACCEPTED by validator consensus.`,
         duration: 10000,

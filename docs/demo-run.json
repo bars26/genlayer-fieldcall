@@ -1,18 +1,19 @@
 {
-  "contract": "0x58576b0a8C0091b8E7E276EDCa9b5D2d9bC826aE",
+  "contract": "0x1c62070B37C5d040ff4E800eD2B6Bd7C4653A4a7",
   "accounts": {
-    "sponsor": "0x716e4678302eE11DCF1d673cC7cCB52cD70803CC",
-    "cofunder": "0x167A6645A350fd67A0D32b9897b9244b9ffc248e",
-    "scout": "0xC70d2324feD457A22c50165eADAE87700f984EF0",
-    "bystander": "0xc0C191c17875c75Bb9dEe2b4f050DC9486868C9E"
+    "sponsor": "0x16387d17B9c4F818E1C92fF18AE186088cAe637A",
+    "cofunder": "0x9176CE25C94385E2910b7Bc665a2c9B5d3cd49E4",
+    "scout": "0x1Fc31EBcc531276A52c77f5e472a7011941d9C01",
+    "bystander": "0x27a2A4311f3801732d6398b579D647BCc2Ea018d"
   },
   "calls": [
     "call_0",
-    "call_1"
+    "call_1",
+    "call_2"
   ],
   "pots": {
     "call_0": {
-      "collect_until": "2027-01-26",
+      "collect_until": "2027-02-13",
       "funded": "3000000000000000000",
       "funders": 2,
       "paid": "0",
@@ -25,7 +26,7 @@
       "state": "open"
     },
     "call_1": {
-      "collect_until": "2027-01-26",
+      "collect_until": "2027-02-13",
       "funded": "1000000000000000000",
       "funders": 1,
       "paid": "0",
@@ -35,6 +36,19 @@
       "returnable": "0",
       "returned": "0",
       "rewards_left": 2,
+      "state": "open"
+    },
+    "call_2": {
+      "collect_until": "2027-02-13",
+      "funded": "1000000000000000000",
+      "funders": 1,
+      "paid": "0",
+      "pot": "750000000000000000",
+      "refunded": 0,
+      "reserved": "250000000000000000",
+      "returnable": "0",
+      "returned": "0",
+      "rewards_left": 3,
       "state": "open"
     }
   },
@@ -46,7 +60,7 @@
       "code": "eligible",
       "outcome": "awaiting_wallet",
       "state": "awaiting_wallet",
-      "why": "Observation 397236824 by simoncolenutt is Vespa velutina (research grade), seen on 2026-08-20 at Spring Place, Romsey, UK, inside United Kingdom. Validators looked at the photos and they show what the call asks for: The photo shows a hornet nest. simoncolenutt has not put a wallet address in their iNaturalist profile yet, so the reward is held for them.",
+      "why": "Observation 397236824 by simoncolenutt is Vespa velutina (research grade), seen on 2026-08-20 at Spring Place, Romsey, UK, inside United Kingdom. GBIF holds the same record (occurrence 6520319147: Vespa velutina, 2026-08-20). Validators looked at the photos and they show what the call asks for: The photo shows a hornet nest. simoncolenutt has not put a wallet address in their iNaturalist profile yet, so the reward is held for them.",
       "facts": {
         "accuracy_m": 2,
         "annotations": [
@@ -58,6 +72,10 @@
         "captive": false,
         "condition": "The photo shows a hornet nest",
         "gbif": "http://www.gbif.org/occurrence/6520319147",
+        "gbif_country": "GB",
+        "gbif_date": "2026-08-20",
+        "gbif_id": "6520319147",
+        "gbif_name": "Vespa velutina",
         "geoprivacy": "open",
         "in_place": true,
         "max_accuracy_m": 100,
@@ -79,33 +97,34 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:29:20",
+          "at": "2026-11-15T11:32:32",
           "code": "eligible",
           "event": "submitted",
-          "evidence": "7e51d5b636f8d521d29d98af808aa8bf3c7e943828a65e0808e3ab2ebbe2552a",
+          "evidence": "ebd6d58d12e013e8dd6ffbaf2ab02cf398e17b25ae8664f9c69e7e6541b41037",
           "ruling": "ELIGIBLE"
         },
         {
-          "at": "2026-10-28T19:32:39",
+          "at": "2026-11-15T11:36:48",
           "before": "ELIGIBLE",
           "by": "funder",
           "code": "eligible",
           "event": "contested",
-          "evidence": "40a0144bc01ab02f954f48a9e1271272023ce927d815d7f95c407b5cb5606ed0",
+          "evidence": "459dbff6e90a5a338710afe21457376e90585f6061e3bd5867c7b3ae89b077aa",
           "ruling": "ELIGIBLE"
         },
         {
           "amount": "500000000000000000",
-          "at": "2026-10-28T19:48:40",
+          "at": "2026-11-15T11:54:37",
           "event": "held",
-          "until": "2027-01-26"
+          "until": "2027-02-13"
         }
       ],
       "packets": [
         {
-          "facts_sha256": "397b1cb36605eb05a5367821ca217f3de2e1648de4e834a1997490641dbcfd11",
+          "facts_sha256": "0aac227e26ef8542448bf05d7935bbe36c727085dc7a10214bcd2a4dbe8a42a2",
+          "gbif_record": "https://www.gbif.org/occurrence/6520319147",
           "observation": "https://www.inaturalist.org/observations/397236824",
-          "packet_sha256": "7e51d5b636f8d521d29d98af808aa8bf3c7e943828a65e0808e3ab2ebbe2552a",
+          "packet_sha256": "ebd6d58d12e013e8dd6ffbaf2ab02cf398e17b25ae8664f9c69e7e6541b41037",
           "photos": [
             {
               "answer": "MEETS",
@@ -115,14 +134,15 @@
           ],
           "profile": "https://www.inaturalist.org/people/simoncolenutt",
           "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
-          "read_at": "2026-10-28T19:29:20",
+          "read_at": "2026-11-15T11:32:32",
           "ruling": "ELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/397236824"
         },
         {
-          "facts_sha256": "397b1cb36605eb05a5367821ca217f3de2e1648de4e834a1997490641dbcfd11",
+          "facts_sha256": "0aac227e26ef8542448bf05d7935bbe36c727085dc7a10214bcd2a4dbe8a42a2",
+          "gbif_record": "https://www.gbif.org/occurrence/6520319147",
           "observation": "https://www.inaturalist.org/observations/397236824",
-          "packet_sha256": "40a0144bc01ab02f954f48a9e1271272023ce927d815d7f95c407b5cb5606ed0",
+          "packet_sha256": "459dbff6e90a5a338710afe21457376e90585f6061e3bd5867c7b3ae89b077aa",
           "photos": [
             {
               "answer": "MEETS",
@@ -132,7 +152,7 @@
           ],
           "profile": "https://www.inaturalist.org/people/simoncolenutt",
           "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
-          "read_at": "2026-10-28T19:32:39",
+          "read_at": "2026-11-15T11:36:48",
           "ruling": "ELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/397236824"
         }
@@ -145,7 +165,7 @@
       "code": "condition_not_met",
       "outcome": "nothing_paid",
       "state": "settled",
-      "why": "Validators looked at the photos of observation 397236834 and they do not show what the call asks for: The photo shows a hornet nest.",
+      "why": "The photos of observation 397236834 do not show: The photo shows a hornet nest.",
       "facts": {
         "accuracy_m": 2,
         "annotations": [],
@@ -154,6 +174,10 @@
         "captive": false,
         "condition": "The photo shows a hornet nest",
         "gbif": "http://www.gbif.org/occurrence/6519064393",
+        "gbif_country": "GB",
+        "gbif_date": "2026-08-20",
+        "gbif_id": "6519064393",
+        "gbif_name": "Vespa velutina",
         "geoprivacy": "open",
         "in_place": true,
         "max_accuracy_m": 100,
@@ -175,14 +199,14 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:30:32",
+          "at": "2026-11-15T11:33:28",
           "code": "condition_not_met",
           "event": "submitted",
-          "evidence": "218626f21710244502194ddacb876e5ca3eccbde976fcbf01e80091c6e5accc0",
+          "evidence": "bd58efb257a2f0a50cfd8575380544af945edd5e7a0596e195529d8502214955",
           "ruling": "INELIGIBLE"
         },
         {
-          "at": "2026-10-28T19:33:27",
+          "at": "2026-11-15T11:37:57",
           "event": "settled",
           "outcome": "nothing_paid",
           "ruling": "INELIGIBLE"
@@ -190,9 +214,10 @@
       ],
       "packets": [
         {
-          "facts_sha256": "26c5413b0547864c2c3f0ddd9f528258f85a4558bf78d57dda7e9eef0f9a8cde",
+          "facts_sha256": "c464e56bae328705ceed78b9a1fa202008cad2c693387eeb52d2a346ac3848ee",
+          "gbif_record": "https://www.gbif.org/occurrence/6519064393",
           "observation": "https://www.inaturalist.org/observations/397236834",
-          "packet_sha256": "218626f21710244502194ddacb876e5ca3eccbde976fcbf01e80091c6e5accc0",
+          "packet_sha256": "bd58efb257a2f0a50cfd8575380544af945edd5e7a0596e195529d8502214955",
           "photos": [
             {
               "answer": "NOT_MEETS",
@@ -212,7 +237,7 @@
           ],
           "profile": "https://www.inaturalist.org/people/simoncolenutt",
           "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
-          "read_at": "2026-10-28T19:30:32",
+          "read_at": "2026-11-15T11:33:28",
           "ruling": "INELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/397236834"
         }
@@ -229,6 +254,7 @@
       "facts": {
         "accuracy_m": 2,
         "annotations": [
+          "Alive or Dead: Alive",
           "Evidence of Presence: Organism",
           "Life Stage: Adult",
           "Sex: Male"
@@ -258,23 +284,23 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:31:33",
+          "at": "2026-11-15T11:35:43",
           "code": "wrong_taxon",
           "event": "submitted",
-          "evidence": "c6f9d543eac5472cffe03fefcb1ff15aa62eb18228b1141fad894add8e487be0",
+          "evidence": "31caac17628df9ca6fa6abd3e9ab706d256c1af5ef1566ec0a698be4eff159ce",
           "ruling": "INELIGIBLE"
         },
         {
-          "at": "2026-10-28T19:33:08",
+          "at": "2026-11-15T11:37:38",
           "before": "INELIGIBLE",
           "by": "submitter",
           "code": "wrong_taxon",
           "event": "contested",
-          "evidence": "c52e0c68cfe9319c2b581e9f4ce02e94930933678aee1c2e59f8e68cc5e928f5",
+          "evidence": "773fc974d67b1fec3721a181e012b1ceea40165397e28f694a8df0d2ff5117cc",
           "ruling": "INELIGIBLE"
         },
         {
-          "at": "2026-10-28T19:48:47",
+          "at": "2026-11-15T11:54:44",
           "event": "settled",
           "outcome": "nothing_paid",
           "ruling": "INELIGIBLE"
@@ -282,22 +308,22 @@
       ],
       "packets": [
         {
-          "facts_sha256": "70808cec6aea228579f5fcfc1396d6296361afe7a9191fc06b4d3ee09471d78c",
+          "facts_sha256": "5ab40679e9f8e33bcc99b1b35f7545e64b2b88cffc9bd4c97ebd2474579e2582",
           "observation": "https://www.inaturalist.org/observations/411158753",
-          "packet_sha256": "c6f9d543eac5472cffe03fefcb1ff15aa62eb18228b1141fad894add8e487be0",
+          "packet_sha256": "31caac17628df9ca6fa6abd3e9ab706d256c1af5ef1566ec0a698be4eff159ce",
           "profile": "https://www.inaturalist.org/people/fergy53",
           "profile_bio_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          "read_at": "2026-10-28T19:31:33",
+          "read_at": "2026-11-15T11:35:43",
           "ruling": "INELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/411158753"
         },
         {
-          "facts_sha256": "70808cec6aea228579f5fcfc1396d6296361afe7a9191fc06b4d3ee09471d78c",
+          "facts_sha256": "5ab40679e9f8e33bcc99b1b35f7545e64b2b88cffc9bd4c97ebd2474579e2582",
           "observation": "https://www.inaturalist.org/observations/411158753",
-          "packet_sha256": "c52e0c68cfe9319c2b581e9f4ce02e94930933678aee1c2e59f8e68cc5e928f5",
+          "packet_sha256": "773fc974d67b1fec3721a181e012b1ceea40165397e28f694a8df0d2ff5117cc",
           "profile": "https://www.inaturalist.org/people/fergy53",
           "profile_bio_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          "read_at": "2026-10-28T19:33:08",
+          "read_at": "2026-11-15T11:37:38",
           "ruling": "INELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/411158753"
         }
@@ -339,14 +365,14 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:31:52",
+          "at": "2026-11-15T11:36:02",
           "code": "outside_place",
           "event": "submitted",
-          "evidence": "f619222e1d0e6cf21c22c942127f5225c37b9ede8c240f5305c376ef880c66cc",
+          "evidence": "041683998e0210d2b5172c034af38d654d6821208f58ff2436aa150b5a1fb7c8",
           "ruling": "INELIGIBLE"
         },
         {
-          "at": "2026-10-28T19:33:34",
+          "at": "2026-11-15T11:38:03",
           "event": "settled",
           "outcome": "nothing_paid",
           "ruling": "INELIGIBLE"
@@ -356,10 +382,10 @@
         {
           "facts_sha256": "21c6e499640a4f02819f9fbe55b360fa8ef53736b767adf6a5710510f6699465",
           "observation": "https://www.inaturalist.org/observations/411204951",
-          "packet_sha256": "f619222e1d0e6cf21c22c942127f5225c37b9ede8c240f5305c376ef880c66cc",
+          "packet_sha256": "041683998e0210d2b5172c034af38d654d6821208f58ff2436aa150b5a1fb7c8",
           "profile": "https://www.inaturalist.org/people/yoyopago_",
           "profile_bio_sha256": "567612bc9377439d64e0f0594f86fe3ad0099acf4f5e9ef9ffecf1740160fa45",
-          "read_at": "2026-10-28T19:31:52",
+          "read_at": "2026-11-15T11:36:02",
           "ruling": "INELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/411204951"
         }
@@ -404,14 +430,14 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:32:06",
+          "at": "2026-11-15T11:36:21",
           "code": "outside_dates",
           "event": "submitted",
-          "evidence": "e956840823da28b340534801a4af41e481f2681683a5d0f8b15b9e0efbdbec43",
+          "evidence": "67ed42c11c2df9b86a80109213e1a82668595e58bb71a75aa54e153d8b1409c1",
           "ruling": "INELIGIBLE"
         },
         {
-          "at": "2026-10-28T19:48:54",
+          "at": "2026-11-15T11:54:56",
           "event": "settled",
           "outcome": "nothing_paid",
           "ruling": "INELIGIBLE"
@@ -421,10 +447,10 @@
         {
           "facts_sha256": "1cfe7b0a84fcb9bf4d3d7be46305c20bcb729c96815939e4e07652030e66fe2b",
           "observation": "https://www.inaturalist.org/observations/182971213",
-          "packet_sha256": "e956840823da28b340534801a4af41e481f2681683a5d0f8b15b9e0efbdbec43",
+          "packet_sha256": "67ed42c11c2df9b86a80109213e1a82668595e58bb71a75aa54e153d8b1409c1",
           "profile": "https://www.inaturalist.org/people/phill-robinson",
           "profile_bio_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          "read_at": "2026-10-28T19:32:06",
+          "read_at": "2026-11-15T11:36:21",
           "ruling": "INELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/182971213"
         }
@@ -466,14 +492,14 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:33:41",
+          "at": "2026-11-15T11:38:10",
           "code": "outside_place",
           "event": "submitted",
-          "evidence": "9a0e20f484bde1805b3bccc516809b4faef5c3b3e5a9719f4d6a2e9194684365",
+          "evidence": "4989c71d5500abd733163b1677f89d815f2c822c057251941c8abc7b188f51ae",
           "ruling": "INELIGIBLE"
         },
         {
-          "at": "2026-10-28T19:33:59",
+          "at": "2026-11-15T11:38:29",
           "event": "settled",
           "outcome": "nothing_paid",
           "ruling": "INELIGIBLE"
@@ -483,10 +509,10 @@
         {
           "facts_sha256": "21c6e499640a4f02819f9fbe55b360fa8ef53736b767adf6a5710510f6699465",
           "observation": "https://www.inaturalist.org/observations/411204951",
-          "packet_sha256": "9a0e20f484bde1805b3bccc516809b4faef5c3b3e5a9719f4d6a2e9194684365",
+          "packet_sha256": "4989c71d5500abd733163b1677f89d815f2c822c057251941c8abc7b188f51ae",
           "profile": "https://www.inaturalist.org/people/yoyopago_",
           "profile_bio_sha256": "567612bc9377439d64e0f0594f86fe3ad0099acf4f5e9ef9ffecf1740160fa45",
-          "read_at": "2026-10-28T19:33:41",
+          "read_at": "2026-11-15T11:38:10",
           "ruling": "INELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/411204951"
         }
@@ -528,14 +554,14 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:34:11",
+          "at": "2026-11-15T11:38:41",
           "code": "outside_place",
           "event": "submitted",
-          "evidence": "dbb8349dd9f0bf80f8a76ee7a31386e3dd545961973a41af910d8650e6d1b2d4",
+          "evidence": "16e0307615b7975f61d1ea909d4bf669887c6e609cfaaa664a2a09214915c0fe",
           "ruling": "INELIGIBLE"
         },
         {
-          "at": "2026-10-28T19:34:25",
+          "at": "2026-11-15T11:38:59",
           "event": "settled",
           "outcome": "nothing_paid",
           "ruling": "INELIGIBLE"
@@ -545,10 +571,10 @@
         {
           "facts_sha256": "21c6e499640a4f02819f9fbe55b360fa8ef53736b767adf6a5710510f6699465",
           "observation": "https://www.inaturalist.org/observations/411204951",
-          "packet_sha256": "dbb8349dd9f0bf80f8a76ee7a31386e3dd545961973a41af910d8650e6d1b2d4",
+          "packet_sha256": "16e0307615b7975f61d1ea909d4bf669887c6e609cfaaa664a2a09214915c0fe",
           "profile": "https://www.inaturalist.org/people/yoyopago_",
           "profile_bio_sha256": "567612bc9377439d64e0f0594f86fe3ad0099acf4f5e9ef9ffecf1740160fa45",
-          "read_at": "2026-10-28T19:34:11",
+          "read_at": "2026-11-15T11:38:41",
           "ruling": "INELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/411204951"
         }
@@ -590,27 +616,27 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:35:41",
+          "at": "2026-11-15T11:40:17",
           "code": "eligible",
           "event": "submitted",
-          "evidence": "7c65c8bd5c0c5550d8ca8a87e83a89d3986d40f6b3f63c6730b1294768f8c91e",
+          "evidence": "d13a1128d541172fe2b1a83ed54616fd36e8c19f72005c2c3ed5a620c27b95a6",
           "ruling": "ELIGIBLE"
         },
         {
           "amount": "250000000000000000",
-          "at": "2026-10-28T19:36:32",
+          "at": "2026-11-15T11:41:13",
           "event": "held",
-          "until": "2027-01-26"
+          "until": "2027-02-13"
         }
       ],
       "packets": [
         {
           "facts_sha256": "fd10efedb3804aeef590a2f9931bcebdb0b17cdc789baa641116565906bc7c8d",
           "observation": "https://www.inaturalist.org/observations/397236834",
-          "packet_sha256": "7c65c8bd5c0c5550d8ca8a87e83a89d3986d40f6b3f63c6730b1294768f8c91e",
+          "packet_sha256": "d13a1128d541172fe2b1a83ed54616fd36e8c19f72005c2c3ed5a620c27b95a6",
           "profile": "https://www.inaturalist.org/people/simoncolenutt",
           "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
-          "read_at": "2026-10-28T19:35:41",
+          "read_at": "2026-11-15T11:40:17",
           "ruling": "ELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/397236834"
         }
@@ -652,27 +678,27 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:35:59",
+          "at": "2026-11-15T11:40:36",
           "code": "eligible",
           "event": "submitted",
-          "evidence": "f08adcadb3515d0a42c3b7d311785091b26b8323d24acf311d720648f2e68398",
+          "evidence": "cfb70359d569c663cb89d19280a9e0444c78eb713b9c092c5db6a775c4d2f4ad",
           "ruling": "ELIGIBLE"
         },
         {
           "amount": "250000000000000000",
-          "at": "2026-10-28T19:49:01",
+          "at": "2026-11-15T11:55:03",
           "event": "held",
-          "until": "2027-01-26"
+          "until": "2027-02-13"
         }
       ],
       "packets": [
         {
           "facts_sha256": "6da853fd525210e1ecade6728e3fa2fdf149e563957b438b279f211c34a0e2b1",
           "observation": "https://www.inaturalist.org/observations/397236811",
-          "packet_sha256": "f08adcadb3515d0a42c3b7d311785091b26b8323d24acf311d720648f2e68398",
+          "packet_sha256": "cfb70359d569c663cb89d19280a9e0444c78eb713b9c092c5db6a775c4d2f4ad",
           "profile": "https://www.inaturalist.org/people/simoncolenutt",
           "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
-          "read_at": "2026-10-28T19:35:59",
+          "read_at": "2026-11-15T11:40:36",
           "ruling": "ELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/397236811"
         }
@@ -718,14 +744,14 @@
       },
       "timeline": [
         {
-          "at": "2026-10-28T19:36:13",
+          "at": "2026-11-15T11:40:54",
           "code": "observer_cap",
           "event": "submitted",
-          "evidence": "678882f0caab7f565e1e72da8312f0d0e153e6cdca6cb583c918e47a462b3184",
+          "evidence": "3c0c5f3555ec52ba036420cde70bb245a74a47ba27c488ae7f8a5e647bf40ba9",
           "ruling": "INELIGIBLE"
         },
         {
-          "at": "2026-10-28T19:49:09",
+          "at": "2026-11-15T11:55:15",
           "event": "settled",
           "outcome": "nothing_paid",
           "ruling": "INELIGIBLE"
@@ -735,44 +761,193 @@
         {
           "facts_sha256": "d1988cfb5d22d10920b0f7fce3b8c36d4dd21ae129ddaf3a7444cc84036e5675",
           "observation": "https://www.inaturalist.org/observations/392140551",
-          "packet_sha256": "678882f0caab7f565e1e72da8312f0d0e153e6cdca6cb583c918e47a462b3184",
+          "packet_sha256": "3c0c5f3555ec52ba036420cde70bb245a74a47ba27c488ae7f8a5e647bf40ba9",
           "profile": "https://www.inaturalist.org/people/simoncolenutt",
           "profile_bio_sha256": "c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758",
-          "read_at": "2026-10-28T19:36:13",
+          "read_at": "2026-11-15T11:40:54",
           "ruling": "INELIGIBLE",
           "source": "https://api.inaturalist.org/v1/observations/392140551"
+        }
+      ]
+    },
+    "sighting_10": {
+      "observation": "403107732",
+      "call": "call_2",
+      "ruling": "ELIGIBLE",
+      "code": "eligible",
+      "outcome": "awaiting_wallet",
+      "state": "awaiting_wallet",
+      "why": "Observation 403107732 by jennwren is Erinaceus europaeus (research grade), seen on 2026-09-24 at The Sycamores, Marlow, England, GB, inside United Kingdom. GBIF holds the same record (occurrence 6566837395: Erinaceus europaeus, 2026-09-24). jennwren has not put a wallet address in their iNaturalist profile yet, so the reward is held for them.",
+      "facts": {
+        "accuracy_m": 5,
+        "annotations": [
+          "Alive or Dead: Alive"
+        ],
+        "call_place": "United Kingdom",
+        "call_taxon": "Erinaceus europaeus",
+        "captive": false,
+        "condition": "",
+        "gbif": "http://www.gbif.org/occurrence/6566837395",
+        "gbif_country": "GB",
+        "gbif_date": "2026-09-24",
+        "gbif_id": "6566837395",
+        "gbif_name": "Erinaceus europaeus",
+        "geoprivacy": "open",
+        "in_place": true,
+        "max_accuracy_m": 1000,
+        "min_account_days": 30,
+        "observation_id": "403107732",
+        "observed_on": "2026-09-24",
+        "observer_id": "7329645",
+        "observer_login": "jennwren",
+        "observer_since": "2023-08-31",
+        "per_observer": 3,
+        "photos": 1,
+        "place_guess": "The Sycamores, Marlow, England, GB",
+        "quality": "research",
+        "taxon_common": "Common Hedgehog",
+        "taxon_id": "43042",
+        "taxon_name": "Erinaceus europaeus",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-11-15T11:42:45",
+          "code": "eligible",
+          "event": "submitted",
+          "evidence": "082fbbef19e3d125c763226d792183d8f9d00087143e9c88820c0c8e0ba8d824",
+          "ruling": "ELIGIBLE"
+        },
+        {
+          "amount": "250000000000000000",
+          "at": "2026-11-15T11:55:22",
+          "event": "held",
+          "until": "2027-02-13"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "0b39b0ef0bd69b642d0bd948f1d08448c5ea0338520c3803b0b7841a1639bb08",
+          "gbif_record": "https://www.gbif.org/occurrence/6566837395",
+          "observation": "https://www.inaturalist.org/observations/403107732",
+          "packet_sha256": "082fbbef19e3d125c763226d792183d8f9d00087143e9c88820c0c8e0ba8d824",
+          "profile": "https://www.inaturalist.org/people/jennwren",
+          "profile_bio_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "read_at": "2026-11-15T11:42:45",
+          "ruling": "ELIGIBLE",
+          "source": "https://api.inaturalist.org/v1/observations/403107732"
+        }
+      ]
+    },
+    "sighting_11": {
+      "observation": "414661608",
+      "call": "call_2",
+      "ruling": "UNCLEAR",
+      "code": "gbif_pending",
+      "outcome": "nothing_paid",
+      "state": "settled",
+      "why": "GBIF has not published observation 414661608 yet (iNaturalist exports to GBIF weekly); read it again later.",
+      "facts": {
+        "accuracy_m": 62,
+        "annotations": [],
+        "call_place": "United Kingdom",
+        "call_taxon": "Erinaceus europaeus",
+        "captive": false,
+        "condition": "",
+        "gbif": "",
+        "geoprivacy": "open",
+        "in_place": true,
+        "max_accuracy_m": 1000,
+        "min_account_days": 30,
+        "observation_id": "414661608",
+        "observed_on": "2026-11-14",
+        "observer_id": "1158399",
+        "observer_login": "jrockhill",
+        "observer_since": "2018-08-23",
+        "per_observer": 3,
+        "photos": 1,
+        "place_guess": "Alton, UK",
+        "quality": "research",
+        "taxon_common": "Common Hedgehog",
+        "taxon_id": "43042",
+        "taxon_name": "Erinaceus europaeus",
+        "wallet": ""
+      },
+      "timeline": [
+        {
+          "at": "2026-11-15T11:42:58",
+          "code": "gbif_pending",
+          "event": "submitted",
+          "evidence": "7ab43b9843617e28cd3530758cdf918aa57e3ed34ecc21a6bc3cf082a54dcb93",
+          "ruling": "UNCLEAR"
+        },
+        {
+          "at": "2026-11-15T11:43:12",
+          "event": "settled",
+          "outcome": "nothing_paid",
+          "ruling": "UNCLEAR"
+        }
+      ],
+      "packets": [
+        {
+          "facts_sha256": "56423c3e619359001c1f425553841b03d1ac022f902c4d4adcd47c5e159f2bc3",
+          "observation": "https://www.inaturalist.org/observations/414661608",
+          "packet_sha256": "7ab43b9843617e28cd3530758cdf918aa57e3ed34ecc21a6bc3cf082a54dcb93",
+          "profile": "https://www.inaturalist.org/people/jrockhill",
+          "profile_bio_sha256": "7a145132de3999e028460529b266ee8b179889c44bdd05ba4858001fb98d3b42",
+          "read_at": "2026-11-15T11:42:58",
+          "ruling": "UNCLEAR",
+          "source": "https://api.inaturalist.org/v1/observations/414661608"
         }
       ]
     }
   },
   "reconciliations": [
     {
-      "label": "after the refused calls: the contract kept nothing",
-      "expected": "0",
-      "balance": "0",
+      "label": "after the refused calls: the deposit is untouched",
+      "expected": "9000000000000000000",
+      "owed": "9000000000000000000",
+      "balance": "9000000000000000000",
       "ok": true
     },
     {
       "label": "call 0 open, the nest's reward reserved",
-      "expected": "3000000000000000000",
-      "balance": "3000000000000000000",
+      "expected": "10050000000000000000",
+      "owed": "7050000000000000000",
+      "balance": "10050000000000000000",
       "ok": true
     },
     {
-      "label": "both calls open",
-      "expected": "4000000000000000000",
-      "balance": "4000000000000000000",
+      "label": "two calls open",
+      "expected": "10050000000000000000",
+      "owed": "6050000000000000000",
+      "balance": "10050000000000000000",
+      "ok": true
+    },
+    {
+      "label": "three calls open",
+      "expected": "10050000000000000000",
+      "owed": "5050000000000000000",
+      "balance": "10050000000000000000",
+      "ok": true
+    },
+    {
+      "label": "after settling",
+      "expected": "10050000000000000000",
+      "owed": "5050000000000000000",
+      "balance": "10050000000000000000",
       "ok": true
     },
     {
       "label": "end of run",
-      "expected": "4000000000000000000",
-      "balance": "4000000000000000000",
+      "expected": "5000000000000000000",
+      "owed": "0",
+      "balance": "5000000000000000000",
       "ok": true
     }
   ],
   "balances": {
-    "sponsor": "17000000000000000000",
+    "sponsor": "16000000000000000000",
     "cofunder": "4000000000000000000",
     "scout": "1000000000000000000",
     "bystander": "1000000000000000000"
@@ -780,72 +955,90 @@
   "log": [
     {
       "who": "sponsor",
-      "call": "create_call(\"Asian hornet nests, UK\", \"Vespa velutina\", \"6857\", \"2026-08-01\", \"2026-12-27\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
-      "value": "2",
-      "hash": "0xd66588911cc816502cc958eff445c761267cf3d0cfc8040b02913ffc812584d4",
+      "call": "deposit()",
+      "value": "9",
+      "hash": "0x68b3130d358a00a95da64abd74ab89f582088d364dc4078a41ec4189e7d1c969",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
-      "returned": "REFUNDED: taxon_id must be an iNaturalist taxon id, like 119019"
+      "returned": "9000000000000000000"
     },
     {
       "who": "sponsor",
-      "call": "create_call(\"Asian hornet nests, UK\", \"999999999\", \"6857\", \"2026-08-01\", \"2026-12-27\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
-      "value": "2",
-      "hash": "0x6dfc4b850ae2af53a2322ef8fcaa6b991792e03e7d67a600268c51cc05c9167e",
+      "call": "create_call(\"Asian hornet nests, UK\", \"Vespa velutina\", \"6857\", \"2026-08-01\", \"2027-01-14\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\", true, 2 GEN)",
+      "value": "0",
+      "hash": "0xf78cf4b355326a3adc431400c0b4d22399966e085670b171db6f2187587103d0",
       "status": "ACCEPTED",
-      "exec": "SUCCESS",
-      "returned": "REFUNDED: iNaturalist has no taxon with that id"
+      "exec": "ERROR",
+      "refused": "taxon_id must be an iNaturalist taxon id, like 119019"
     },
     {
       "who": "sponsor",
-      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"999999999\", \"2026-08-01\", \"2026-12-27\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
-      "value": "2",
-      "hash": "0xccc37c812b78baf2624dde302601e921f4078ec8a04b2e53b95a9ff8b40c1d9b",
+      "call": "create_call(\"Asian hornet nests, UK\", \"999999999\", \"6857\", \"2026-08-01\", \"2027-01-14\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\", true, 2 GEN)",
+      "value": "0",
+      "hash": "0x417125965dfdfb7acdfcaed7be8af3142a3502b14eeec5841ce3ebcd97d25ad4",
       "status": "ACCEPTED",
-      "exec": "SUCCESS",
-      "returned": "REFUNDED: iNaturalist has no place with that id"
+      "exec": "ERROR",
+      "refused": "iNaturalist has no taxon with that id"
     },
     {
       "who": "sponsor",
-      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-09-30\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
-      "value": "2",
-      "hash": "0xc61ba1ac50492c7239b59aa49f97d80d08e0fff3e897e8e211969b5535c44790",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"999999999\", \"2026-08-01\", \"2027-01-14\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\", true, 2 GEN)",
+      "value": "0",
+      "hash": "0xc7d49968c59e7b87eaebf5a08a4320b35c60b7aa20724f75c9199c1b573d7883",
       "status": "ACCEPTED",
-      "exec": "SUCCESS",
-      "returned": "REFUNDED: ends must be on or after starts, and not in the past"
+      "exec": "ERROR",
+      "refused": "iNaturalist has no place with that id"
     },
     {
       "who": "sponsor",
-      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-12-27\", 0.05 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
-      "value": "2",
-      "hash": "0x2af799ef5b70aa6fcbf39cf1bf555684a2c1384c3282897c3ce85dbf89e86bd8",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-09-30\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\", true, 2 GEN)",
+      "value": "0",
+      "hash": "0x066a81f5f554ee01b69259a2c82e35736e68f3b957c506a3999d774ec1c1f221",
       "status": "ACCEPTED",
-      "exec": "SUCCESS",
-      "returned": "REFUNDED: reward must be at least 0.1 GEN"
+      "exec": "ERROR",
+      "refused": "ends must be on or after starts, and not in the past"
     },
     {
       "who": "sponsor",
-      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-12-27\", 1 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
-      "value": "0.5",
-      "hash": "0x24b67574a9d2b7970c977fdc406ff51164bd608b52ee5158cddc462b938fbd7f",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2027-01-14\", 0.05 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\", true, 2 GEN)",
+      "value": "0",
+      "hash": "0xbfa9f16ecd098333ec11b0921b646766c3fc095d2feb3dd2635b4a2aab4ea051",
       "status": "ACCEPTED",
-      "exec": "SUCCESS",
-      "returned": "REFUNDED: fund the call with at least one reward"
+      "exec": "ERROR",
+      "refused": "reward must be a whole number from 100000000000000000 to 1000000000000000000000000000"
     },
     {
       "who": "sponsor",
-      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-02-31\", \"2026-12-27\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
-      "value": "2",
-      "hash": "0xdf572d527249678dfbaeba4802d20848d937cb4709e1a5436ec615992f38133c",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2027-01-14\", 1 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\", true, 0.5 GEN)",
+      "value": "0",
+      "hash": "0x4beefe639bd69db7f06ef90e23a0a2791979c79c3387282462b3fd5a96298364",
       "status": "ACCEPTED",
-      "exec": "SUCCESS",
-      "returned": "REFUNDED: starts and ends must be real calendar dates written YYYY-MM-DD"
+      "exec": "ERROR",
+      "refused": "fund the call with at least one reward"
     },
     {
       "who": "sponsor",
-      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-12-27\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\")",
-      "value": "2",
-      "hash": "0x93cc01e7dc458423b567b9f153c440d10ff657a77c1dab2fb66d3ec4722bc9de",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-02-31\", \"2027-01-14\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\", true, 2 GEN)",
+      "value": "0",
+      "hash": "0x2f7bf002cb295bff0e269b49e39162cbaa9d098320869a02fa4ef2e162fe834a",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "starts and ends must be real calendar dates written YYYY-MM-DD"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2027-01-14\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\", true, 20 GEN)",
+      "value": "0",
+      "hash": "0xd5d2575912efbddc0f88e3b284e2483c4e858a3dc23886b0fe76124b0717cddd",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "deposit first: 20 GEN needed, 9 GEN credited"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet nests, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2027-01-14\", 0.5 GEN, 2, true, 30, 100, \"The photo shows a hornet nest\", true, 2 GEN)",
+      "value": "0",
+      "hash": "0x082c482d7b5dc7ec64e4aae3f823dd67454fc7223d90fee47e1f4b55c21490cf",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "call_0"
@@ -854,7 +1047,7 @@
       "who": "cofunder",
       "call": "fund(\"call_0\")",
       "value": "1",
-      "hash": "0x09e8b05b39e8e19716f515a360886ed4aa1de9d19ff93e05c444b9f195cc31ea",
+      "hash": "0x4a4ac847f2fe9d115675a8d75c0d1cf3bbbe9bf9d4a77d696b4b710d45aa8b44",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "funded"
@@ -863,16 +1056,16 @@
       "who": "bystander",
       "call": "fund(\"call_0\")",
       "value": "0.05",
-      "hash": "0x3c7c3b74132a9fbd9231d294befa50f938123210e18ba24bb834c95b4063b2b0",
+      "hash": "0x684061a51e5fd9af72686452fb1b50f6960b27249ed20ee42b669d2d5bf1c6d5",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
-      "returned": "REFUNDED: Send at least 0.1 GEN to fund the call"
+      "returned": "REFUNDED: Send at least 0.1 GEN to fund the call (your GEN is credited back: withdraw it)"
     },
     {
       "who": "scout",
       "call": "submit(\"call_0\", \"397236824\")",
       "value": "0",
-      "hash": "0x45bc0cbf2c00b68e0411a1fbb8205a2e4008f76d73ebc3287e08d7066a07b1c1",
+      "hash": "0x4ea76d22dd61505f2ad43b9debceebd3520e7d88468a1d4125c0e424d71c65c7",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_0"
@@ -881,7 +1074,7 @@
       "who": "scout",
       "call": "submit(\"call_0\", \"397236834\")",
       "value": "0",
-      "hash": "0x4f3db17edfa1d7b788087b6861f7c7e051bb80ed02199cbf407212bacabd49e4",
+      "hash": "0xcc669b7f598f428c398962907ed9f3aba510f9bb240184f22d904e9579769b19",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_1"
@@ -890,7 +1083,7 @@
       "who": "scout",
       "call": "submit(\"call_0\", \"411158753\")",
       "value": "0",
-      "hash": "0xddeae4e1009ddd1686f6fb03287381f306be5c93a08768efc10b5b5766ee033e",
+      "hash": "0xa03db9f6e40059a73d5733e6686f7483c59b32932995b858b49d7a262c2e0642",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_2"
@@ -899,7 +1092,7 @@
       "who": "scout",
       "call": "submit(\"call_0\", \"411204951\")",
       "value": "0",
-      "hash": "0x94962ba8db36d9781e507748e1d253a611bb00bc8b9f0cfa4beba4f3aeec5d47",
+      "hash": "0x65e3682b514bbb854ba2fbaca0c51f8c31bc85ee27f2a3e13e654ee9f5122b67",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_3"
@@ -908,7 +1101,7 @@
       "who": "scout",
       "call": "submit(\"call_0\", \"182971213\")",
       "value": "0",
-      "hash": "0xc01a47840743d098cd896b099eb18bf73aa2ea3c8ded8f43421c9dd0ff06ca42",
+      "hash": "0x1fb91a8e2a8b2f16d6dac9b2fba56a5996ada1340d388d7daf48e412c1679ddf",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_4"
@@ -917,7 +1110,7 @@
       "who": "scout",
       "call": "submit(\"call_0\", \"397236824\")",
       "value": "0",
-      "hash": "0x0746a503e290137f8c9da091b7adb26f5329790ed564aa142a188ac0e6fe8018",
+      "hash": "0x47b218c5249fb65ff61ae720eabcd76d3e3b9a2717c4afac1462844569fab75d",
       "status": "ACCEPTED",
       "exec": "ERROR",
       "refused": "sighting_0 for this observation is still open"
@@ -926,7 +1119,7 @@
       "who": "scout",
       "call": "settle(\"sighting_0\")",
       "value": "0",
-      "hash": "0xfbafac9ac0ba7e7360fc7a8f8ba4da3547af35011d12891db7046b311f0ebe27",
+      "hash": "0xb4ffa06fb289c705da0fb6ea18f2d424f1937ef114bee5003f0fbade95726715",
       "status": "ACCEPTED",
       "exec": "ERROR",
       "refused": "The response window is still open; only a funder can pay early"
@@ -935,7 +1128,7 @@
       "who": "cofunder",
       "call": "contest(\"sighting_0\")",
       "value": "0",
-      "hash": "0xce9736882a9280535078442876e56ebb96f44f61d69c7b1b71bef4564067e245",
+      "hash": "0x1bfc6afce5f7cbb9954a66bdd0aeb3de58ecdc4960bc462d750e34b0e66f0743",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "ELIGIBLE"
@@ -944,7 +1137,7 @@
       "who": "scout",
       "call": "contest(\"sighting_2\")",
       "value": "0",
-      "hash": "0xea6fdcada2f7472308bb5ebd0214295727a08b31b2c9c0df1ab66574da990879",
+      "hash": "0x5ecaa796734e4146178964e33d4ed7f8816fdf237befd7f41f5edce83603ab1c",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "INELIGIBLE"
@@ -953,7 +1146,7 @@
       "who": "scout",
       "call": "settle(\"sighting_1\")",
       "value": "0",
-      "hash": "0x5dbb2dae3f98c1798c450862422102abbefe02ed1b44b521f02b8794ec7ae2f3",
+      "hash": "0x26c8097c20819d0117ecaa47086b12c664c984f78582f7dc89f6ec69588ee116",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "nothing_paid"
@@ -962,7 +1155,7 @@
       "who": "scout",
       "call": "settle(\"sighting_3\")",
       "value": "0",
-      "hash": "0xc53d30bd34f76776545d5dff37f539454cbed04d4365b0dcb6c319c5c8782948",
+      "hash": "0x77d736ee17714ea55e46b033d145e2781c03c21524c080ae23cf8102da26da15",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "nothing_paid"
@@ -971,7 +1164,7 @@
       "who": "scout",
       "call": "submit(\"call_0\", \"411204951\")",
       "value": "0",
-      "hash": "0xae050cc9d41fd724d9cfee70487833f59b5f04a2b9e9ffe4988f6d9516f9849b",
+      "hash": "0x694594fc2c40845ff8769d55310a9f6b2805baf33cfb0eb62547845804805f4c",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_5"
@@ -980,7 +1173,7 @@
       "who": "scout",
       "call": "settle(\"sighting_5\")",
       "value": "0",
-      "hash": "0x085737ee6a8190bfcc1c72ec5fa0da970c404bae320b84605785baad02ac5d29",
+      "hash": "0x9758c6fa71ba088d23fb3ab0377905333eba1e443044ea4e6b97256114af24ff",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "nothing_paid"
@@ -989,7 +1182,7 @@
       "who": "scout",
       "call": "submit(\"call_0\", \"411204951\")",
       "value": "0",
-      "hash": "0xdfda0a6c93969b3de36083e59933a2266d758d6b5cf783b532d770deae76801f",
+      "hash": "0x344d2fa64da49aff934027c0cc785d62e0b1db10e591b7decb3dc985ba0a614b",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_6"
@@ -998,7 +1191,7 @@
       "who": "scout",
       "call": "settle(\"sighting_6\")",
       "value": "0",
-      "hash": "0xc811c5ab5e530aed61af66778706b554e19d7ae52832f130cf02b81fc36aac9c",
+      "hash": "0xbe15fd6b379ef3bd4573eae9275e1d2b120d66b3347eb0389ee55ff0a4ed54bc",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "nothing_paid"
@@ -1007,16 +1200,16 @@
       "who": "scout",
       "call": "submit(\"call_0\", \"411204951\")",
       "value": "0",
-      "hash": "0x155dbdf0c4f19acad754eed1cf96529042e8b0cf9c70f2ea85b669312e6983c7",
+      "hash": "0xcdd907e43e053ed1710b159145681e979b01a3e9d1a00c4dee65cc1a0a847ba4",
       "status": "ACCEPTED",
       "exec": "ERROR",
       "refused": "This observation has been submitted to this call 3 times"
     },
     {
       "who": "sponsor",
-      "call": "create_call(\"Asian hornet sightings, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2026-12-27\", 0.25 GEN, 2, true, 30, 100, \"\")",
-      "value": "1",
-      "hash": "0xd742f927c6101b42acd8683b4a9a4b09c942467a166a35ed58db48d1b78df504",
+      "call": "create_call(\"Asian hornet sightings, UK\", \"119019\", \"6857\", \"2026-08-01\", \"2027-01-14\", 0.25 GEN, 2, true, 30, 100, \"\", false, 1 GEN)",
+      "value": "0",
+      "hash": "0x4c5d01280bb86221f5c5c8d7cf8231e8ee54ec24b8d5db3e7a0ddae5eaae9a26",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "call_1"
@@ -1025,7 +1218,7 @@
       "who": "scout",
       "call": "submit(\"call_1\", \"397236834\")",
       "value": "0",
-      "hash": "0x41c9a84a45e2c68819664659c5a74072f76d6c14337237742434204f5406ef80",
+      "hash": "0xc7417b082807d3535ec7bb9945955df5426c09eff7a01a7a53bbf49de5e8c03f",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_7"
@@ -1034,7 +1227,7 @@
       "who": "scout",
       "call": "submit(\"call_1\", \"397236811\")",
       "value": "0",
-      "hash": "0x0d29a320cb3ca11a48095e0b525b60fcdbe5115939c98a53da9c41ef49fed4b2",
+      "hash": "0x511641fd5613605ded207e11e49943b2e47604909cb1509cbd227d2ca9422358",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_8"
@@ -1043,7 +1236,7 @@
       "who": "scout",
       "call": "submit(\"call_1\", \"392140551\")",
       "value": "0",
-      "hash": "0x5bfb610f8ce54b733bd6d0541193dc3b4e58e471ab7a2bce54c0a09a4dedcb2e",
+      "hash": "0x8d2ed6da2a22432ff37ee6247960e66f10280746b6b53ba7374fa9b7c7724f8c",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "sighting_9"
@@ -1052,7 +1245,7 @@
       "who": "sponsor",
       "call": "settle(\"sighting_7\")",
       "value": "0",
-      "hash": "0x0d4f00cc69156158cb7ac319d7c4229d4f19691ef0b69c11b46c5ed87250a95b",
+      "hash": "0x84773b479895325c28253d7c41ed108f1d1dffb45a1da1f2f5dc9278849646d5",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "awaiting_wallet"
@@ -1061,7 +1254,7 @@
       "who": "bystander",
       "call": "collect(\"sighting_7\")",
       "value": "0",
-      "hash": "0x52a77342cc934079e64a7b4721b197352515ac69c4c10b41bd1b90a6058b93a9",
+      "hash": "0x018a27742b559b5204df9f0677e67a386300c48c652fdeae64d7c6020e64e9c5",
       "status": "ACCEPTED",
       "exec": "ERROR",
       "refused": "simoncolenutt has not added a wallet address to their iNaturalist profile yet"
@@ -1070,16 +1263,52 @@
       "who": "bystander",
       "call": "close(\"call_1\")",
       "value": "0",
-      "hash": "0x7e47837c0d5726370d8bfff7a3d9777dd6d40f42c692964e4863058ae2897416",
+      "hash": "0xd75b4a58e0d8d0c6e024af4c0aa614aa91e56d61f679610724e8063748ec14d7",
       "status": "ACCEPTED",
       "exec": "ERROR",
-      "refused": "Sightings can be submitted and rewards collected until 2027-01-26"
+      "refused": "Sightings can be submitted and rewards collected until 2027-02-13"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Hedgehogs, UK (checked against GBIF)\", \"43042\", \"6857\", \"2026-09-01\", \"2027-01-14\", 0.25 GEN, 3, true, 30, 1000, \"\", true, 1 GEN)",
+      "value": "0",
+      "hash": "0xd576de3cfcb837d019acde41a913c6ffce9649ade982898854ed9358a2df0aa8",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "call_2"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_2\", \"403107732\")",
+      "value": "0",
+      "hash": "0x03dffb706a241345f1b272cc125243d990200ef1d2826aa3a1050acffc248071",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_10"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_2\", \"414661608\")",
+      "value": "0",
+      "hash": "0x01ad9672d1ceb852cc0f27b07f374de3d962caf67fa11e7331fffc372f1abd80",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "sighting_11"
+    },
+    {
+      "who": "scout",
+      "call": "settle(\"sighting_11\")",
+      "value": "0",
+      "hash": "0x9696ff3086bc3386314d9e039c19aeb38a5d4f60b8c730d75bc0b53d35d548e3",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "nothing_paid"
     },
     {
       "who": "bystander",
       "call": "settle(\"sighting_0\")",
       "value": "0",
-      "hash": "0x9fa92587f11891e549c51657d383dd44ed53c053472c08651422436769a7790b",
+      "hash": "0x27a3e9ea3437cdd23de40ce29411928c8c1316de356c4b9f6cbfca118baf828b",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "awaiting_wallet"
@@ -1088,7 +1317,7 @@
       "who": "bystander",
       "call": "settle(\"sighting_2\")",
       "value": "0",
-      "hash": "0xe761385d1576c929cb1d9f98f466dc89aca076cee387fe82387632a4b59aa1ce",
+      "hash": "0x5aec5b2b28dd9c7cbb5277ff8c6f85628ea4ff6de7f3f8d13443e8774084e99b",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "nothing_paid"
@@ -1097,7 +1326,7 @@
       "who": "bystander",
       "call": "settle(\"sighting_4\")",
       "value": "0",
-      "hash": "0x87f6d06c1731bb55e5440d5bc46f3480d27f1cd908d8ba7dc74afaf8502349fd",
+      "hash": "0x16804b50324aabeb8575501f50ecc1983861a1869f9c20eb9dbf3bc8a85a6678",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "nothing_paid"
@@ -1106,7 +1335,7 @@
       "who": "bystander",
       "call": "settle(\"sighting_8\")",
       "value": "0",
-      "hash": "0xa44c5326ddd699e1b66313823984648d58fe70794facb7d203848fc1ca19dc3c",
+      "hash": "0xc430cda36c55b68b990c9972113ec12e2509fb46ad5da3be415176b5f2e69984",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "awaiting_wallet"
@@ -1115,19 +1344,55 @@
       "who": "bystander",
       "call": "settle(\"sighting_9\")",
       "value": "0",
-      "hash": "0x4dd7cffe927b36cf239ff0e07274f2fc609f2b9cd654e1cfe9e11997d95a1693",
+      "hash": "0x7679f72cad0eeff9d09be2eb009246ff47b4611619169f0f94fd2e77520a584d",
       "status": "ACCEPTED",
       "exec": "SUCCESS",
       "returned": "nothing_paid"
     },
     {
+      "who": "bystander",
+      "call": "settle(\"sighting_10\")",
+      "value": "0",
+      "hash": "0xae733d26117ae3026e7865b5571e3e7e2154e3fbfbe696ea8f7a39ac905e4bb4",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "awaiting_wallet"
+    },
+    {
       "who": "scout",
       "call": "submit(\"call_0\", \"397236824\")",
       "value": "0",
-      "hash": "0xccc37dbeec850bdf685e1ae2746f5ae780d23696d2ebf9de4be90091c40e3561",
+      "hash": "0xaca26677d4438e427337b2c9c159e29c80277e3d7c1b1f5ef5833bfebde1692c",
       "status": "ACCEPTED",
       "exec": "ERROR",
       "refused": "This observation has already earned its reward (sighting_0)"
+    },
+    {
+      "who": "sponsor",
+      "call": "withdraw()",
+      "value": "0",
+      "hash": "0x33e1141bbbb717ffe6e26bd8e33b0cb2e1f212b49b209a1e865e20cabbeb7057",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "5000000000000000000"
+    },
+    {
+      "who": "bystander",
+      "call": "withdraw()",
+      "value": "0",
+      "hash": "0x4d157fca254707c99139a775977fbed6779ac7cdef016df158988b4875a93f7a",
+      "status": "ACCEPTED",
+      "exec": "SUCCESS",
+      "returned": "50000000000000000"
+    },
+    {
+      "who": "bystander",
+      "call": "withdraw()",
+      "value": "0",
+      "hash": "0xfa8f54ef92347b88b55544c5f6fb306161a89f979d188bfe616f71ef947743ac",
+      "status": "ACCEPTED",
+      "exec": "ERROR",
+      "refused": "Nothing to withdraw"
     }
   ]
 }

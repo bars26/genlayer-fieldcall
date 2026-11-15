@@ -7,6 +7,7 @@ import { CallCard } from "@/components/CallCard";
 import { CreateCallModal } from "@/components/CreateCallModal";
 import { Navbar } from "@/components/Navbar";
 import { ObservationCheck } from "@/components/ObservationCheck";
+import { OwedCard } from "@/components/OwedCard";
 import { TransactionPanel } from "@/components/TransactionPanel";
 import { Button } from "@/components/ui/button";
 import { formatGen, wei } from "@/lib/contracts/types";
@@ -119,6 +120,7 @@ export default function HomePage() {
               ))}
             </div>
             <aside className="lg:col-span-4 space-y-5 lg:sticky lg:top-24">
+              <OwedCard />
               <div className="brand-card p-5 space-y-3 text-sm">
                 <h3 className="display text-xl">How a sighting is ruled</h3>
                 <p>
@@ -131,9 +133,14 @@ export default function HomePage() {
                   and answers MEETS, NOT_MEETS or UNCLEAR. They must agree. They never re-identify the species.
                 </p>
                 <p>
-                  <strong>Paid to the observer.</strong> The reward goes to the 0x address in the observer&apos;s iNaturalist profile, which only they can
-                  edit. Anyone can submit; nobody can redirect the money. One payout per observation, a per-observer cap, and funders are never paid by
-                  their own call.
+                  <strong>A second source, when asked.</strong> A call can also require GBIF&apos;s copy of the record (GBIF republishes
+                  iNaturalist&apos;s research-grade records weekly) to show the same species and date. Not published yet: unclear, nothing reserved.
+                </p>
+                <p>
+                  <strong>Credited to the observer.</strong> The reward is credited to the 0x address in the observer&apos;s iNaturalist profile, which
+                  only they can edit, and that wallet takes it out with Withdraw. Anyone can submit; nobody can redirect the money. One payout per
+                  observation, a per-observer cap, and funders are never paid by their own call. Calls are funded from a deposit, so no GEN rides on a
+                  reading the validators cannot decide.
                 </p>
                 <p>
                   <strong>Ten minutes to answer.</strong> Funders can ask once for a fresh reading of a qualifying sighting (an identification may change);

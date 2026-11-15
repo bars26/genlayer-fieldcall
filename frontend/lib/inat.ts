@@ -148,10 +148,21 @@ export async function searchPlaces(q: string): Promise<PlaceHit[]> {
   return (body?.results ?? []).map((p: any) => ({ id: String(p.id), name: String(p.display_name ?? p.name ?? "") }));
 }
 
+export type GbifCopy = { id: string; name: string; date: string; country: string } | null;
+
+/** GBIF's copy of an iNaturalist observation (GBIF republishes research-grade records weekly), or null if not there yet. */
+export async function getGbif(observationId: string): Promise<GbifCopy> {
+  const res = await fetch(`https://api.gbif.org/v1/occurrence/search?datasetKey=50c9509d-22c7-4a22-a47d-8c48425ef4a7&catalogNumber=${observationId}&limit=1`);
+  if (!res.ok) throw new Error(`GBIF answered ${res.status}`);
+  const r = ((await res.json()) as any)?.results?.[0];
+  if (!r) return null;
+  return { id: String(r.gbifID ?? ""), name: String(r.scientificName ?? "").split(/\s+/).slice(0, 2).join(" "), date: String(r.eventDate ?? "").slice(0, 10), country: String(r.countryCode ?? "") };
+}
+
 const daysBetween = (a: string, b: string) => (Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000;
 
 /** The contract's checks, in its order, for one observation against one call. */
-export function checkAgainst(call: Call, o: Observation, profile: Profile | null): Check[] {
+export function checkAgainst(call: Call, o: Observation, profile: Profile | null, gbif?: GbifCopy | "error"): Check[] {
   const taxon = taxonOf(call);
   const maxAcc = Number(call.max_accuracy_m);
   const minDays = Number(call.min_account_days);
@@ -198,6 +209,18 @@ export function checkAgainst(call: Call, o: Observation, profile: Profile | null
       state: since && o.observedOn && daysBetween(since, o.observedOn) >= minDays ? "ok" : "fail",
       detail: since ? `joined ${since}` : "unknown",
     });
+  if (call.gbif_required) {
+    const same = gbif && gbif !== "error" && gbif.name.toLowerCase() === o.taxonName.split(/\s+/).slice(0, 2).join(" ").toLowerCase() && gbif.date === o.observedOn;
+    checks.push({
+      key: "gbif",
+      label: "GBIF's copy agrees (species and date)",
+      state: gbif === "error" ? "later" : same ? "ok" : "fail",
+      detail:
+        gbif === "error" ? "GBIF could not be read; validators read it when it is submitted"
+          : !gbif ? "not published by GBIF yet (weekly): it would be unclear, nothing reserved"
+          : `GBIF ${gbif.id}: ${gbif.name}, ${gbif.date}`,
+    });
+  }
   if (call.condition)
     checks.push({ key: "condition", label: call.condition, state: "later", detail: "validators look at up to 3 photos when it is submitted" });
   checks.push({

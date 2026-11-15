@@ -1,0 +1,275 @@
+{
+  "network": "bradbury",
+  "contract": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f",
+  "accounts": {
+    "sponsor": "0x8A52cD7EE73EA27BFA45BD908607860a24E661F8",
+    "scout": "0x1cfF3f6F0E1aeA4665D1E133372171637e6f0Fc2"
+  },
+  "call": {
+    "collect_until": "2027-02-13",
+    "condition": "",
+    "created_at": "2026-11-15T11:31:48",
+    "ends": "2027-01-14",
+    "funded_total": "1000000000000000000",
+    "gbif_required": true,
+    "history_json": "[{\"at\": \"2026-11-15T11:31:48\", \"event\": \"created\", \"amount\": \"1000000000000000000\"}, {\"at\": \"2026-11-15T11:32:32\", \"event\": \"sighting_submitted\", \"sighting\": \"sighting_0\", \"observation\": \"397236834\", \"ruling\": \"ELIGIBLE\"}, {\"at\": \"2026-11-15T11:33:17\", \"event\": \"sighting_submitted\", \"sighting\": \"sighting_1\", \"observation\": \"411158753\", \"ruling\": \"INELIGIBLE\"}, {\"at\": \"2026-11-15T11:33:59\", \"event\": \"reward_held\", \"sighting\": \"sighting_0\", \"observation\": \"397236834\"}]",
+    "id": "call_0",
+    "max_accuracy_m": 100,
+    "min_account_days": 30,
+    "n_eligible": 1,
+    "n_funders": 1,
+    "n_paid": 0,
+    "n_pending": 0,
+    "n_refunded": 0,
+    "n_sightings": 2,
+    "paid_total": 0,
+    "per_observer": 2,
+    "place_id": "6857",
+    "place_name": "United Kingdom",
+    "pot": "750000000000000000",
+    "research_only": true,
+    "reserved": "250000000000000000",
+    "returnable": 0,
+    "returned_total": 0,
+    "reward": "250000000000000000",
+    "sponsor": "0x8a52cd7ee73ea27bfa45bd908607860a24e661f8",
+    "starts": "2026-08-01",
+    "state": "open",
+    "taxon_id": "119019",
+    "taxon_json": "{\"common\": \"Yellow-legged Hornet\", \"group\": \"Insecta\", \"name\": \"Vespa velutina\", \"rank\": \"species\"}",
+    "title": "Asian hornet sightings, UK (checked against GBIF)"
+  },
+  "sightings": {
+    "sighting_0": {
+      "call_id": "call_0",
+      "code": "eligible",
+      "evidence_json": "[{\"facts_sha256\": \"6a4fe22f97067a47a2cb83a5900aa6e6796314474ee77e6762c23b43d259b77f\", \"gbif_record\": \"https://www.gbif.org/occurrence/6519064393\", \"observation\": \"https://www.inaturalist.org/observations/397236834\", \"packet_sha256\": \"c805e37c419870e3f48d2166969cbdff8f0f708db240fd939be25acab92eed6e\", \"profile\": \"https://www.inaturalist.org/people/simoncolenutt\", \"profile_bio_sha256\": \"c8cb34f3a77cfd7af03bc56bc219e8148a772e8d569eb3332860e9225ed72758\", \"read_at\": \"2026-11-15T11:32:32\", \"ruling\": \"ELIGIBLE\", \"source\": \"https://api.inaturalist.org/v1/observations/397236834\"}]",
+      "facts_json": "{\"accuracy_m\": 2, \"annotations\": [], \"call_place\": \"United Kingdom\", \"call_taxon\": \"Vespa velutina\", \"captive\": false, \"condition\": \"\", \"gbif\": \"http://www.gbif.org/occurrence/6519064393\", \"gbif_country\": \"GB\", \"gbif_date\": \"2026-08-20\", \"gbif_id\": \"6519064393\", \"gbif_name\": \"Vespa velutina\", \"geoprivacy\": \"open\", \"in_place\": true, \"max_accuracy_m\": 100, \"min_account_days\": 30, \"observation_id\": \"397236834\", \"observed_on\": \"2026-08-20\", \"observer_id\": \"4831496\", \"observer_login\": \"simoncolenutt\", \"observer_since\": \"2021-08-06\", \"per_observer\": 2, \"photos\": 4, \"place_guess\": \"The Abbey, Romsey, UK\", \"quality\": \"research\", \"taxon_common\": \"Yellow-legged Hornet\", \"taxon_id\": \"119019\", \"taxon_name\": \"Vespa velutina\", \"wallet\": \"\"}",
+      "filed_at": "2026-11-15T11:32:32Z",
+      "funders_contested": false,
+      "id": "sighting_0",
+      "observation_id": "397236834",
+      "observer_id": "4831496",
+      "observer_login": "simoncolenutt",
+      "outcome": "awaiting_wallet",
+      "payee": "0x0000000000000000000000000000000000000000",
+      "reward": "250000000000000000",
+      "ruling": "ELIGIBLE",
+      "state": "awaiting_wallet",
+      "submitter": "0x1cff3f6f0e1aea4665d1e133372171637e6f0fc2",
+      "submitter_contested": false,
+      "timeline_json": "[{\"at\": \"2026-11-15T11:32:32\", \"code\": \"eligible\", \"event\": \"submitted\", \"evidence\": \"c805e37c419870e3f48d2166969cbdff8f0f708db240fd939be25acab92eed6e\", \"ruling\": \"ELIGIBLE\"}, {\"amount\": \"250000000000000000\", \"at\": \"2026-11-15T11:33:59\", \"event\": \"held\", \"until\": \"2027-02-13\"}]",
+      "why": "Observation 397236834 by simoncolenutt is Vespa velutina (research grade), seen on 2026-08-20 at The Abbey, Romsey, UK, inside United Kingdom. GBIF holds the same record (occurrence 6519064393: Vespa velutina, 2026-08-20). simoncolenutt has not put a wallet address in their iNaturalist profile yet, so the reward is held for them.",
+      "window_from": "2026-11-15T11:32:32Z"
+    },
+    "sighting_1": {
+      "call_id": "call_0",
+      "code": "wrong_taxon",
+      "evidence_json": "[{\"facts_sha256\": \"21f7c62745b8de70e89dcef29401efb0d1a74cedfe3141e8f4d8a7f6b8d2a4c5\", \"observation\": \"https://www.inaturalist.org/observations/411158753\", \"packet_sha256\": \"e5b3a511bc467da56368415124b995cc08da69d146ffb0f5ee3765eae1211d0d\", \"profile\": \"https://www.inaturalist.org/people/fergy53\", \"profile_bio_sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\", \"read_at\": \"2026-11-15T11:33:17\", \"ruling\": \"INELIGIBLE\", \"source\": \"https://api.inaturalist.org/v1/observations/411158753\"}]",
+      "facts_json": "{\"accuracy_m\": 2, \"annotations\": [\"Alive or Dead: Alive\", \"Evidence of Presence: Organism\", \"Life Stage: Adult\", \"Sex: Male\"], \"call_place\": \"United Kingdom\", \"call_taxon\": \"Vespa velutina\", \"captive\": false, \"condition\": \"\", \"gbif\": \"\", \"geoprivacy\": \"open\", \"in_place\": true, \"max_accuracy_m\": 100, \"min_account_days\": 30, \"observation_id\": \"411158753\", \"observed_on\": \"2026-10-25\", \"observer_id\": \"10569679\", \"observer_login\": \"fergy53\", \"observer_since\": \"2026-05-21\", \"per_observer\": 2, \"photos\": 1, \"place_guess\": \"The Mill House, Liskeard, England, GB\", \"quality\": \"research\", \"taxon_common\": \"European Hornet\", \"taxon_id\": \"54327\", \"taxon_name\": \"Vespa crabro\", \"wallet\": \"\"}",
+      "filed_at": "2026-11-15T11:33:17Z",
+      "funders_contested": false,
+      "id": "sighting_1",
+      "observation_id": "411158753",
+      "observer_id": "10569679",
+      "observer_login": "fergy53",
+      "outcome": "nothing_paid",
+      "payee": "0x0000000000000000000000000000000000000000",
+      "reward": 0,
+      "ruling": "INELIGIBLE",
+      "state": "settled",
+      "submitter": "0x1cff3f6f0e1aea4665d1e133372171637e6f0fc2",
+      "submitter_contested": false,
+      "timeline_json": "[{\"at\": \"2026-11-15T11:33:17\", \"code\": \"wrong_taxon\", \"event\": \"submitted\", \"evidence\": \"e5b3a511bc467da56368415124b995cc08da69d146ffb0f5ee3765eae1211d0d\", \"ruling\": \"INELIGIBLE\"}, {\"at\": \"2026-11-15T11:34:38\", \"event\": \"settled\", \"outcome\": \"nothing_paid\", \"ruling\": \"INELIGIBLE\"}]",
+      "why": "Observation 411158753 is identified as Vespa crabro, which is not Vespa velutina.",
+      "window_from": "2026-11-15T11:33:17Z"
+    }
+  },
+  "reconciliations": [
+    {
+      "label": "call open, 0.5 GEN of the deposit still credited",
+      "expected": "1500000000000000000",
+      "owed": "500000000000000000",
+      "balance": "1500000000000000000",
+      "ok": true
+    },
+    {
+      "label": "both sightings settled",
+      "expected": "1500000000000000000",
+      "owed": "500000000000000000",
+      "balance": "1500000000000000000",
+      "ok": true
+    },
+    {
+      "label": "end of run, after the sponsor withdrew the unused deposit",
+      "expected": "1000000000000000000",
+      "owed": "0",
+      "balance": "1000000000000000000",
+      "ok": true
+    }
+  ],
+  "log": [
+    {
+      "who": "sponsor",
+      "call": "deposit()",
+      "value": "1.5000",
+      "ok": true,
+      "hash": "0xd224a70d8d5fe1146ec6bb4ecfe070a81982d5628497f8df2a8306f9fc203ddf",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 31,
+      "recipient": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet sightings, UK\", \"999999999\", \"6857\", \"2026-08-01\", \"2027-01-14\", \"250000000000000000\", 2, true, 30, 100, \"\", true, \"1000000000000000000\")",
+      "value": "0.0000",
+      "ok": false,
+      "hash": "0xa715deef990103a16e22fa0571e9e7862be98c5563426ef814df6265cd67ab94",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_ERROR",
+      "votes": [
+        "ERROR",
+        "ERROR",
+        "ERROR",
+        "ERROR",
+        "ERROR"
+      ],
+      "seconds": 32,
+      "recipient": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f"
+    },
+    {
+      "who": "sponsor",
+      "call": "create_call(\"Asian hornet sightings, UK (checked against GBIF)\", \"119019\", \"6857\", \"2026-08-01\", \"2027-01-14\", \"250000000000000000\", 2, true, 30, 100, \"\", true, \"1000000000000000000\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x1422f391ad79ff3fbf6e4bc16e05996760f6ab2762d90d72dd596866d274a69d",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 40,
+      "recipient": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_0\", \"397236834\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x059b4db00ce3bc4642a5fa601a53dcf0b179f19b8a429b25d5e71a121a010ea6",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 39,
+      "recipient": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f"
+    },
+    {
+      "who": "scout",
+      "call": "submit(\"call_0\", \"411158753\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x68fb8bcf65755d04c9450cba63f13e63babda91a3c9840593ded9ffb4fb493e4",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 38,
+      "recipient": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f"
+    },
+    {
+      "who": "sponsor",
+      "call": "settle(\"sighting_0\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x1aafa68b02ec75cc4f9eb1c8ca4bada76549230d1bf2265b78d7cb621aa8a4c9",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 38,
+      "recipient": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f"
+    },
+    {
+      "who": "scout",
+      "call": "settle(\"sighting_1\")",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x19830cdd5f5429ddd1d766b741c590521dcfeb599b841b34e8f6be8199c79b93",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 39,
+      "recipient": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f"
+    },
+    {
+      "who": "sponsor",
+      "call": "collect(\"sighting_0\")",
+      "value": "0.0000",
+      "ok": false,
+      "hash": "0x31c952afd20b7aa450230a997f7e64edd9d412eda27023a5224de05f566137e7",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_ERROR",
+      "votes": [
+        "ERROR",
+        "ERROR",
+        "ERROR",
+        "ERROR",
+        "ERROR"
+      ],
+      "seconds": 41,
+      "recipient": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f"
+    },
+    {
+      "who": "sponsor",
+      "call": "withdraw()",
+      "value": "0.0000",
+      "ok": true,
+      "hash": "0x04708fcfaed79b526e2455968fe481d5b12c891029135110a4160f58d5df85c1",
+      "status": "ACCEPTED",
+      "execution": "FINISHED_WITH_RETURN",
+      "votes": [
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN",
+        "RETURN"
+      ],
+      "seconds": 40,
+      "recipient": "0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f"
+    }
+  ]
+}

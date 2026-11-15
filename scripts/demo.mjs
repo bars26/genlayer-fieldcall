@@ -76,9 +76,15 @@ async function write(c, who, functionName, args, value = 0n, { expectError = fal
           await sleep(10000 * wait);
         }
       }
+      // A receipt can be ACCEPTED while leaders are still rotating: wait until the last round is Accepted or Undetermined.
+      let rounds = receipt?.consensus_history?.consensus_results ?? [];
+      for (let poll = 0; rounds.length && !["Accepted", "Undetermined"].includes(rounds.at(-1)?.consensus_round) && poll < 60; poll++) {
+        await sleep(5000);
+        try { rounds = (await c.getTransaction({ hash }))?.consensus_history?.consensus_results ?? rounds; } catch {}
+      }
       const lr = receipt?.consensus_data?.leader_receipt;
       const first = Array.isArray(lr) ? lr[0] : lr;
-      const exec = first?.execution_result ?? "?";
+      const exec = rounds.length && rounds.at(-1)?.consensus_round === "Undetermined" ? "UNDETERMINED" : first?.execution_result ?? "?";
       let returned = first?.result?.payload?.readable;
       try { returned = JSON.parse(returned); } catch {}
       const row = {
@@ -184,8 +190,8 @@ const reconcile = async (label) => {
   const t = JSON.parse(await read(A, "totals"));
   const onChain = await balance(CONTRACT);
   const ok = BigInt(t.expected_balance) === onChain;
-  reconciliations.push({ label, expected: t.expected_balance, balance: onChain.toString(), ok });
-  console.log(`  reconcile (${label}): open pots + reserved rewards = ${fmt(t.expected_balance)} GEN; contract balance ${fmt(onChain)} GEN ${ok ? "OK" : "MISMATCH"}`);
+  reconciliations.push({ label, expected: t.expected_balance, owed: t.owed, balance: onChain.toString(), ok });
+  console.log(`  reconcile (${label}): pots ${fmt(t.pots)} + reserved ${fmt(t.reserved)} + credited ${fmt(t.owed)} = ${fmt(t.expected_balance)} GEN; contract balance ${fmt(onChain)} GEN ${ok ? "OK" : "MISMATCH"}`);
   if (!ok) throw new Error("balance mismatch");
 };
 
@@ -193,24 +199,28 @@ const HORNET = "119019"; // Vespa velutina, yellow-legged (Asian) hornet
 const UK = "6857"; // United Kingdom
 const ENDS = new Date(Date.now() + 60 * 86_400_000).toISOString().slice(0, 10);
 const NEST = "The photo shows a hornet nest";
-const open = (c, who, title, taxon, place, starts, ends, reward, perObserver, research, minDays, maxAcc, condition, value) =>
-  write(c, who, "create_call", [title, taxon, place, starts, ends, reward, perObserver, research, minDays, maxAcc, condition], value);
+const open = (c, who, title, taxon, place, starts, ends, reward, perObserver, research, minDays, maxAcc, condition, gbif, amount, opts = {}) =>
+  write(c, who, "create_call", [title, taxon, place, starts, ends, reward, perObserver, research, minDays, maxAcc, condition, gbif, amount], 0n, opts);
+const refused = { expectError: true };
 
-// Refused at creation: the GEN comes straight back.
-await open(A, "sponsor", "Asian hornet nests, UK", "Vespa velutina", UK, "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, 2n * GEN); // a name, not a taxon id
-await open(A, "sponsor", "Asian hornet nests, UK", "999999999", UK, "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, 2n * GEN); // iNaturalist has no such taxon
-await open(A, "sponsor", "Asian hornet nests, UK", HORNET, "999999999", "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, 2n * GEN); // no such place
-await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", "2026-09-30", GEN / 2n, 2, true, 30, 100, NEST, 2n * GEN); // already ended
-await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN / 20n, 2, true, 30, 100, NEST, 2n * GEN); // reward below 0.1 GEN
-await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN, 2, true, 30, 100, NEST, GEN / 2n); // pot smaller than one reward
-await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-02-31", ENDS, GEN / 2n, 2, true, 30, 100, NEST, 2n * GEN); // no such calendar date
-await reconcile("after the refused calls: the contract kept nothing");
+// v2: a call is funded from GEN deposited first. Opening it sends no GEN, so a refusal (or a reading the validators
+// cannot decide) leaves the deposit where it was.
+await write(A, "sponsor", "deposit", [], 9n * GEN);
+await open(A, "sponsor", "Asian hornet nests, UK", "Vespa velutina", UK, "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, true, 2n * GEN, refused); // a name, not a taxon id
+await open(A, "sponsor", "Asian hornet nests, UK", "999999999", UK, "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, true, 2n * GEN, refused); // iNaturalist has no such taxon
+await open(A, "sponsor", "Asian hornet nests, UK", HORNET, "999999999", "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, true, 2n * GEN, refused); // no such place
+await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", "2026-09-30", GEN / 2n, 2, true, 30, 100, NEST, true, 2n * GEN, refused); // already ended
+await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN / 20n, 2, true, 30, 100, NEST, true, 2n * GEN, refused); // reward below 0.1 GEN
+await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN, 2, true, 30, 100, NEST, true, GEN / 2n, refused); // funds smaller than one reward
+await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-02-31", ENDS, GEN / 2n, 2, true, 30, 100, NEST, true, 2n * GEN, refused); // no such calendar date
+await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, true, 20n * GEN, refused); // more than the deposit
+await reconcile("after the refused calls: the deposit is untouched");
 
 // Call 0: nests only. Validators look at the photos.
 console.log("");
-await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, 2n * GEN);
+await open(A, "sponsor", "Asian hornet nests, UK", HORNET, UK, "2026-08-01", ENDS, GEN / 2n, 2, true, 30, 100, NEST, true, 2n * GEN); // photo condition + GBIF
 await write(B, "cofunder", "fund", [cid(0)], GEN);
-await write(X, "bystander", "fund", [cid(0)], GEN / 20n); // below the 0.1 GEN minimum top-up: sent back
+await write(X, "bystander", "fund", [cid(0)], GEN / 20n); // below the 0.1 GEN minimum top-up: credited back
 const nest = await submit("scout", S, cid(0), "397236824", "a nest in a tree, Romsey");
 const adult = await submit("scout", S, cid(0), "397236834", "an adult hornet on a branch");
 const crabro = await submit("scout", S, cid(0), "411158753", "a European hornet, the native lookalike");
@@ -234,22 +244,36 @@ await reconcile("call 0 open, the nest's reward reserved");
 
 // Call 1: any sighting, at most two per observer.
 console.log("");
-await open(A, "sponsor", "Asian hornet sightings, UK", HORNET, UK, "2026-08-01", ENDS, GEN / 4n, 2, true, 30, 100, "", GEN);
+await open(A, "sponsor", "Asian hornet sightings, UK", HORNET, UK, "2026-08-01", ENDS, GEN / 4n, 2, true, 30, 100, "", false, GEN);
 const s1 = await submit("scout", S, cid(1), "397236834", "adult, simoncolenutt's 1st");
 const s2 = await submit("scout", S, cid(1), "397236811", "adult, simoncolenutt's 2nd");
 const s3 = await submit("scout", S, cid(1), "392140551", "adult, simoncolenutt's 3rd");
 await write(A, "sponsor", "settle", [s1]); // the sponsor pays at once: no wallet in the profile, so it is held
 await write(X, "bystander", "collect", [s1], 0n, { expectError: true }); // nothing to collect until a wallet is linked
 await write(X, "bystander", "close", [cid(1)], 0n, { expectError: true }); // submissions and collection stay open 30 days after the end
-await reconcile("both calls open");
+await reconcile("two calls open");
+
+// Call 2: hedgehogs, GBIF required. GBIF republishes iNaturalist's research-grade records weekly: a September
+// record is there, a record from this week is not yet.
+console.log("");
+await open(A, "sponsor", "Hedgehogs, UK (checked against GBIF)", "43042", UK, "2026-09-01", ENDS, GEN / 4n, 3, true, 30, 1000, "", true, GEN);
+const hog = await submit("scout", S, cid(2), "403107732", "a hedgehog in September, published by GBIF");
+const hogNew = await submit("scout", S, cid(2), "414661608", "a hedgehog from this week, not yet on GBIF");
+await write(S, "scout", "settle", [hogNew]); // the scout accepts: it can be read again once GBIF publishes it
+await reconcile("three calls open");
 
 console.log("\nwaiting 10 minutes for the response windows...");
 await sleep(630_000);
-for (const id of [nest, crabro, old, s2, s3]) await write(X, "bystander", "settle", [id]);
+for (const id of [nest, crabro, old, s2, s3, hog]) await write(X, "bystander", "settle", [id]);
 await write(S, "scout", "submit", [cid(0), "397236824"], 0n, { expectError: true }); // already earned its reward
+await reconcile("after settling");
+// Only `withdraw` sends GEN out, to the caller: the sponsor's unused deposit and the bystander's refused top-up.
+await write(A, "sponsor", "withdraw", []);
+await write(X, "bystander", "withdraw", []);
+await write(X, "bystander", "withdraw", [], 0n, { expectError: true }); // nothing left
 await reconcile("end of run");
 
-const calls = [cid(0), cid(1)];
+const calls = [cid(0), cid(1), cid(2)];
 console.log("\nfinal calls:");
 const pots = {};
 for (const id of calls) {

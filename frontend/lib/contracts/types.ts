@@ -20,6 +20,7 @@ export interface Call {
   min_account_days: Num;
   max_accuracy_m: Num;
   condition: string;
+  gbif_required?: boolean;
   state: "open" | "closed";
   pot: Num;
   reserved: Num;
@@ -96,6 +97,10 @@ export interface SightingFacts {
   photos?: number;
   annotations?: string[];
   gbif?: string;
+  gbif_id?: string;
+  gbif_name?: string;
+  gbif_date?: string;
+  gbif_country?: string;
   photo_answer?: "MEETS" | "NOT_MEETS" | "UNCLEAR";
   call_taxon?: string;
   call_place?: string;
@@ -114,6 +119,7 @@ export interface EvidencePacket {
   source?: string;
   profile?: string;
   profile_bio_sha256?: string;
+  gbif_record?: string;
   photos?: PhotoLook[];
   facts_sha256?: string;
   ruling?: Ruling;

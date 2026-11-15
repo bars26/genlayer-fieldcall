@@ -4,12 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build"
+    "build": "cd frontend && npm run build",
+    "postinstall": "node scripts/patch-genlayer-js.mjs"
   },
   "devDependencies": {
     "genlayer-js": "^1.1.8"
   },
   "workspaces": [
     "frontend"
-  ]
+  ],
+  "dependencies": {
+    "genlayer-js-bradbury": "npm:genlayer-js@2.0.0-rc.2"
+  }
 }

@@ -1,3 +1,5 @@
+import { currentNetwork } from "../network";
+
 /**
  * Typed, user-readable errors for the FieldCall frontend.
  *
@@ -95,7 +97,7 @@ export function classifyError(err: unknown, phase: Phase, txHash?: string): TxEr
       ...base,
       kind: "wallet_missing",
       message: "No wallet is connected.",
-      hint: "Connect MetaMask (top right) before funding a call, submitting a sighting or settling.",
+      hint: "Connect MetaMask (top right) before funding a program or running an audit.",
     });
   }
   if (INSUFFICIENT.test(detail)) {
@@ -103,7 +105,10 @@ export function classifyError(err: unknown, phase: Phase, txHash?: string): TxEr
       ...base,
       kind: "insufficient_funds",
       message: "Your wallet does not have enough GEN for this transaction.",
-      hint: "Click \"Test GEN\" in the header to get 50 GEN from the GenLayer Studio faucet, then try again.",
+      hint:
+        currentNetwork().id === "studio"
+          ? "Click \"Test GEN\" in the header to get 50 GEN from the GenLayer Studio faucet, then try again."
+          : "Get Bradbury GEN from the GenLayer testnet faucet (the Faucet link in the header), then try again.",
     });
   }
   if (code === -32005 || code === 429 || RATE_LIMIT.test(detail)) {
@@ -120,15 +125,15 @@ export function classifyError(err: unknown, phase: Phase, txHash?: string): TxEr
     return new TxError({
       ...base,
       kind: "wrong_network",
-      message: "Your wallet is not on the GenLayer Studio network.",
-      hint: "Switch MetaMask to GenLayer Studio (chain id 61999) and try again.",
+      message: `Your wallet is not on ${currentNetwork().label}.`,
+      hint: `Switch MetaMask to ${currentNetwork().chainName} (chain id ${currentNetwork().chainId}) and try again.`,
     });
   }
   if (UNREACHABLE.test(detail)) {
     return new TxError({
       ...base,
       kind: "rpc_unreachable",
-      message: "Could not reach the GenLayer Studio RPC (it returned an error page or no response).",
+      message: `Could not reach the ${currentNetwork().label} RPC (it returned an error page or no response).`,
       hint: "The endpoint may be restarting. Try again in a minute; nothing was written.",
     });
   }
@@ -142,7 +147,7 @@ export function classifyError(err: unknown, phase: Phase, txHash?: string): TxEr
         ? "The dry-run of this call was rejected by the contract, so no transaction was sent."
         : "Fee estimation failed before anything was sent.",
       hint: reverted
-        ? "The contract would reject this call as sent; check the inputs and the sighting's current state."
+        ? "The contract would reject this call as sent; check the inputs and the audit's current state."
         : "Try again; if it persists the Studio node may be busy.",
     });
   }
@@ -200,4 +205,4 @@ export function toErrorInfo(err: unknown): ErrorInfo & { detail: string; txHash?
   };
 }
 
-export const EXPLORER_TX_URL = (hash: string) => `https://explorer-studio.genlayer.com/tx/${hash}`;
+export const EXPLORER_TX_URL = (hash: string) => `${currentNetwork().explorer}/tx/${hash}`;

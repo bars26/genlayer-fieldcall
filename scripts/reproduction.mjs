@@ -1,5 +1,6 @@
-// Builds docs/REPRODUCTION.md from docs/demo-run.json (written by scripts/demo.mjs) and, when present,
-// docs/ui-test.json (a MetaMask run from the live app).
+// Builds docs/REPRODUCTION.md from docs/demo-run.json (GenLayer Studio, written by scripts/demo.mjs), and, when
+// present, docs/bradbury/demo-run.json (Bradbury testnet, scripts/demo-bradbury.mjs) and docs/ui-test.json (a MetaMask
+// run from the live app). The v1 run is kept in docs/v1/.
 //
 //   node scripts/reproduction.mjs
 
@@ -38,15 +39,18 @@ const pots = run.calls.map((id) => {
   return `| ${id} | ${gen(p.funded)} | ${gen(p.paid)} | ${gen(p.reserved)} | ${gen(p.pot)} | ${p.rewards_left} | ${p.state} | ${p.collect_until} |`;
 });
 
-// v1.1 checks the reviewers asked for, picked out of the transaction log.
+// v2 checks, picked out of the transaction log.
 const pick = (re) => run.log.find((r) => re.test(r.call));
 const v11 = [
-  ["A call starting on 2026-02-31 (no such date) is refunded, not crashed", pick(/create_call\(.*"2026-02-31"/)],
-  ["A 0.05 GEN top-up (below the 0.1 GEN minimum) is sent back", pick(/^fund\(.*\)$/) && run.log.find((r) => /^fund\(/.test(r.call) && r.value === "0.05")],
+  ["Opening a call sends no GEN: it is funded from a deposit, and a refused call leaves the deposit untouched", pick(/create_call\(.*"999999999"/)],
+  ["A call starting on 2026-02-31 (no such date) is refused, not crashed", pick(/create_call\(.*"2026-02-31"/)],
+  ["A call asking for more than the deposit is refused", [...run.log].find((r) => /create_call\(.*20 GEN\)/.test(r.call))],
+  ["A 0.05 GEN top-up (below the 0.1 GEN minimum) is credited back", run.log.find((r) => /^fund\(/.test(r.call) && r.value === "0.05")],
   ["A fourth submission of the same observation to the same call is refused", [...run.log].reverse().find((r) => /submit\(.*"411204951"\)/.test(r.call) && r.refused)],
+  ["Only withdraw sends GEN out, to the caller", run.log.find((r) => /^withdraw\(/.test(r.call) && r.returned)],
 ].filter(([, r]) => r);
 const v11Table = v11.length
-  ? `## v1.1 checks, live
+  ? `## v2 checks, live
 
 | Check | Result | Tx |
 |---|---|---|
@@ -61,22 +65,52 @@ let uiTest = "";
 const uiPath = new URL("../docs/ui-test.json", import.meta.url);
 if (existsSync(uiPath)) {
   const ui = JSON.parse(readFileSync(uiPath, "utf8"));
+  const utx = ui.network === "bradbury" ? (h) => (h ? `[\`${h.slice(0, 10)}…\`](https://explorer-bradbury.genlayer.com/tx/${h})` : "") : tx;
   uiTest = `## Wallet test from the live app
 
-${ui.note} Wallet \`${ui.wallet}\`. Every transaction is FINALIZED with execution result SUCCESS.
+${ui.note} Wallet \`${ui.wallet}\`.
 
 | Step | GEN sent | Result | Tx |
 |---|---|---|---|
-${ui.steps.map(([step, value, result, hash]) => `| ${esc(step)} | ${value} | ${esc(result)} | ${tx(hash)} |`).join("\n")}
+${ui.steps.map(([step, value, result, hash]) => `| ${esc(step)} | ${value} | ${esc(result)} | ${utx(hash)} |`).join("\n")}
 `;
 }
 
-const md = `# FieldCall: reproduction of the live run
+let bradbury = "";
+const bPath = new URL("../docs/bradbury/demo-run.json", import.meta.url);
+if (existsSync(bPath)) {
+  const b = JSON.parse(readFileSync(bPath, "utf8"));
+  const BX = "https://explorer-bradbury.genlayer.com";
+  const btx = (h) => (h ? `[\`${h.slice(0, 10)}…\`](${BX}/tx/${h})` : "");
+  bradbury = `## Bradbury testnet run
+
+The same program (\`contracts/field_call.bradbury.py\`: the Studio source with the Bradbury header, checked by
+\`python3 scripts/bradbury_source.py --check\`) at [\`${b.contract}\`](${BX}/address/${b.contract}), run by
+\`scripts/demo-bradbury.mjs\`. Five Bradbury validators read iNaturalist and GBIF for every reading. Bradbury reports each
+transaction's decision, execution result and votes; results were read back from the contract.
+
+Call \`${b.call.id}\`: ${esc(b.call.title)} (GBIF required: ${b.call.gbif_required}), reward ${gen(b.call.reward)}.
+
+| Sighting | Observation | Ruling | Reason |
+|---|---|---|---|
+${Object.entries(b.sightings).map(([id, s]) => `| ${id} | ${obs(s.observation_id)} | **${s.ruling}** (${s.code}) | ${esc(s.why)} |`).join("\n")}
+
+| Who | Call | Status | Execution | Votes | Seconds | Tx |
+|---|---|---|---|---|---|---|
+${b.log.map((r) => `| ${r.who} | \`${esc(r.call)}\` | ${r.status} | ${r.execution} | ${r.votes.join("/")} | ${r.seconds} | ${btx(r.hash)} |`).join("\n")}
+
+| Point | Expected | Contract balance | Match |
+|---|---|---|---|
+${b.reconciliations.map((r) => `| ${r.label} | ${gen(r.expected)} | ${gen(r.balance)} | ${r.ok ? "yes" : "**no**"} |`).join("\n")}
+`;
+}
+
+const md = `# FieldCall v2: reproduction of the live runs
 
 Contract on GenLayer Studio: [\`${run.contract}\`](${EXPLORER}/address/${run.contract}) (source: \`contracts/field_call.py\`, checked
 byte-identical with \`node scripts/verify-code.mjs ${run.contract}\`).
 
-\`scripts/demo.mjs\` opened two **demo calls** with test wallets and submitted **real iNaturalist observations** of the
+\`scripts/demo.mjs\` opened three **demo calls** with test wallets and submitted **real iNaturalist observations** of the
 yellow-legged (Asian) hornet, *Vespa velutina*, an invasive predator of honeybees that the UK asks the public to report. Every
 reading below is real validator consensus over iNaturalist's live API; where a call has a photo condition, the validators
 looked at the photos themselves. None of these observers has a wallet address in their iNaturalist profile, so their rewards
@@ -102,7 +136,8 @@ ${pots.join("\n")}
 
 ## Balance reconciliation
 
-\`totals()\` (open pots plus reserved rewards) against the contract's on-chain balance, each time after every transfer had finalized:
+\`totals()\` (running totals of open pots, reserved rewards, unreturned shares of closed calls, and GEN credited but not yet
+withdrawn) against the contract's on-chain balance, each time after every transfer had finalized:
 
 | Point | Expected | Contract balance | Match |
 |---|---|---|---|
@@ -124,6 +159,7 @@ ${packets.join("\n")}
 ${timelines.join("\n")}
 
 ${v11Table}
+${bradbury}
 ${uiTest}
 ## Every transaction
 

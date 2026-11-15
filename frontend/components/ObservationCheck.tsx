@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Check as CheckIcon, Eye, Loader2, Search, Wallet, X } from "lucide-react";
 import { obsUrl, observationIdFrom, peopleUrl, taxonOf, todayUtc, wei, type Call, type Sighting } from "@/lib/contracts/types";
-import { checkAgainst, getObservation, getProfile, rewardText, type Check } from "@/lib/inat";
+import { checkAgainst, getObservation, getProfile, rewardText, type Check, getGbif } from "@/lib/inat";
 import { useFieldCallWrite } from "@/lib/hooks/useFieldCall";
 import { useWallet } from "@/lib/genlayer/wallet";
 import { Button } from "./ui/button";
@@ -50,9 +50,12 @@ export function ObservationCheck({ calls, sightings }: { calls: Call[]; sighting
     staleTime: 60_000,
     queryFn: async () => {
       const o = await getObservation(id!);
-      if (!o) return { o: null, profile: null };
-      const profile = o.userId ? await getProfile(o.userId).catch(() => null) : null;
-      return { o, profile };
+      if (!o) return { o: null, profile: null, gbif: null };
+      const [profile, gbif] = await Promise.all([
+        o.userId ? getProfile(o.userId).catch(() => null) : Promise.resolve(null),
+        getGbif(o.id).catch(() => "error" as const),
+      ]);
+      return { o, profile, gbif };
     },
   });
 
@@ -67,7 +70,7 @@ export function ObservationCheck({ calls, sightings }: { calls: Call[]; sighting
   const results = o
     ? open
         .map((c) => {
-          const checks = checkAgainst(c, o, lookup.data?.profile ?? null);
+          const checks = checkAgainst(c, o, lookup.data?.profile ?? null, (lookup.data as any)?.gbif);
           const prior = sightings.find((s) => s.call_id === c.id && s.observation_id === o.id && (s.state === "pending" || s.ruling === "ELIGIBLE"));
           return { c, checks, ok: !checks.some((k) => k.state === "fail"), prior };
         })

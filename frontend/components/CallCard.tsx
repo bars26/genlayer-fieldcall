@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarDays, Camera, Eye, Loader2, MapPin, ShieldCheck, Users } from "lucide-react";
+import { CalendarDays, Camera, Eye, Globe2, Loader2, MapPin, ShieldCheck, Users } from "lucide-react";
 import {
   formatGen,
   funderRow,
@@ -118,6 +118,11 @@ export function CallCard({ call, sightings, observations }: { call: Call; sighti
           </Term>
           {Number(call.min_account_days) > 0 && (
             <Term icon={<Users className="h-4 w-4" />}>Observer&apos;s account at least {String(call.min_account_days)} days old at the sighting</Term>
+          )}
+          {call.gbif_required && (
+            <Term icon={<Globe2 className="h-4 w-4 text-[#2F6B8A]" />} strong>
+              Checked against GBIF: its copy of the record must show the same species and date
+            </Term>
           )}
           {call.condition && (
             <Term icon={<Eye className="h-4 w-4 text-[#E8662C]" />} strong>

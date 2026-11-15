@@ -142,6 +142,12 @@ export function SightingCard({ s, call, obs }: { s: Sighting; call: Call; obs?: 
               <Fact k="Observer since" v={facts.observer_since || "—"} />
               <Fact k="Wallet in profile" v={facts.wallet ? short(facts.wallet) : "none"} />
               <Fact k="Annotations" v={facts.annotations?.length ? facts.annotations.join(", ") : "none"} />
+              {facts.gbif_id && (
+                <>
+                  <Fact k="GBIF record" v={`${facts.gbif_id} (${facts.gbif_country || "?"})`} />
+                  <Fact k="GBIF says" v={`${facts.gbif_name || "?"}, ${facts.gbif_date || "?"}`} />
+                </>
+              )}
             </dl>
             {lastLook.length > 0 && (
               <div>
@@ -165,6 +171,15 @@ export function SightingCard({ s, call, obs }: { s: Sighting; call: Call; obs?: 
                 <p key={p.packet_sha256 ?? i} className="mono text-[11px] text-muted-foreground break-all">
                   #{i + 1} {p.read_at} UTC · {p.ruling} · packet {p.packet_sha256?.slice(0, 16)}… · facts {p.facts_sha256?.slice(0, 12)}…
                   {p.profile_bio_sha256 && <> · profile {p.profile_bio_sha256.slice(0, 12)}…</>}
+                  {p.gbif_record && (
+                    <>
+                      {" "}
+                      ·{" "}
+                      <a className="underline" href={p.gbif_record} target="_blank" rel="noreferrer">
+                        GBIF record read
+                      </a>
+                    </>
+                  )}
                   {facts.gbif && i === 0 && (
                     <>
                       {" "}

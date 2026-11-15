@@ -89,6 +89,7 @@ export function CreateCallModal({ open, onOpenChange }: { open: boolean; onOpenC
     minAccountDays: "30",
     maxAccuracy: "100",
     condition: first.condition,
+    gbifRequired: false,
   });
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setF({ ...f, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
@@ -128,6 +129,7 @@ export function CreateCallModal({ open, onOpenChange }: { open: boolean; onOpenC
           minAccountDays: +f.minAccountDays,
           maxAccuracyM: +f.maxAccuracy,
           condition: f.condition.trim(),
+          gbifRequired: f.gbifRequired,
         },
         fund,
       });
@@ -223,6 +225,13 @@ export function CreateCallModal({ open, onOpenChange }: { open: boolean; onOpenC
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={f.researchOnly} onChange={set("researchOnly")} className="h-4 w-4 accent-[#1F3B2D]" />
             Research grade only (the iNaturalist community agreed on the identification)
+          </label>
+          <label className="flex items-start gap-2 text-sm">
+            <input type="checkbox" checked={f.gbifRequired} onChange={set("gbifRequired")} className="h-4 w-4 mt-0.5 accent-[#1F3B2D]" />
+            <span>
+              Also check GBIF: the record must be published by GBIF with the same species and date. GBIF republishes iNaturalist&apos;s research-grade
+              records weekly, so the newest sightings wait (unclear, nothing reserved) until it does.
+            </span>
           </label>
           <div className="space-y-1">
             <Label className="flex items-center gap-1.5">

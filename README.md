@@ -104,6 +104,12 @@ matched the contract's on-chain balance at six points on Studio and three on Bra
 finalized. Closing and refunding need a call past its collect date, so they are covered by the direct tests (63 tests, run
 on both the Studio and the Bradbury runner in CI), including one with 301 funders and 120 refused submissions.
 
+**From the live app with MetaMask, on Bradbury:** a tester deposited 1 GEN and opened a GBIF-checked call from it (the call
+itself sent no GEN), submitted a real Asian hornet sighting that five validators ruled eligible against both iNaturalist and
+GBIF, had a 0.05 GEN top-up credited back, withdrew it, and settled the sighting after its window. A submission to a photo call
+ended without a majority on Bradbury and changed nothing, which is why photo calls are demonstrated on Studio. Transactions in
+[`docs/REPRODUCTION.md`](docs/REPRODUCTION.md#wallet-test-from-the-live-app).
+
 ## Who can do what (and the attacks this blocks)
 
 | Rule | Why |

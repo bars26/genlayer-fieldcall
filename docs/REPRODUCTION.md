@@ -150,6 +150,21 @@ Call `call_0`: Asian hornet sightings, UK (checked against GBIF) (GBIF required:
 | both sightings settled | 1.5 GEN | 1.5 GEN | yes |
 | end of run, after the sponsor withdrew the unused deposit | 1 GEN | 1 GEN | yes |
 
+## Wallet test from the live app
+
+MetaMask test from the production app (fieldcall-bars26.vercel.app) on Bradbury testnet, contract 0xA6280Ed66eF5Ea243DEC2236441Be0588EAFEb0f, five validators per transaction. The tester opens a call from the "Asian hornet nests, UK" preset with "Also check GBIF" ticked and 1 GEN of funding: the app first deposits the GEN, then opens the call, which sends none. A submission to that photo call ended without a majority (Bradbury validators often run out of time on image prompts, as the README says; the contract state did not change), so the tester submitted the same real observation to the demo's GBIF call without a photo condition, which all five validators ruled eligible. The rest exercises the credit path: a refused top-up is credited back and withdrawn, and the eligible sighting is settled once its response window has passed. Wallet `0x4f80b5c475fced34fc9a07ffccf39e1adc1406bf`.
+
+| Step | GEN sent | Result | Tx |
+|---|---|---|---|
+| Deposit 1 GEN (sent by the app before opening the call) | 1 GEN | credited to the tester; 5/5 validators | [`0x9c53bee2…`](https://explorer-bradbury.genlayer.com/tx/0x9c53bee2ad4a3e9e8ca4e58cf9a803db8de1b6f504a36b30dadf59c4b3b6d282) |
+| Open a call: Asian hornet nests, UK, GBIF required, funded with 1 GEN from the deposit |  | call_1 open; validators read taxon 119019 and place 6857 from iNaturalist; 5/5 | [`0x34ba80cf…`](https://explorer-bradbury.genlayer.com/tx/0x34ba80cfa845adf8011d2498981c540a0bacc038d0bb573ca0349396987ed3f3) |
+| Submit observation 397236811 to the photo call |  | no majority (two validators disagreed on the photo reading, one timed out): no sighting stored, the pot untouched | [`0xfa8aeb47…`](https://explorer-bradbury.genlayer.com/tx/0xfa8aeb47f013fe9129b10900851281152f48db4d033558a4d7c82990a86cfa2f) |
+| Collect the reward of the demo's sighting_0 |  | refused in code, 5/5: the observer has no wallet in their iNaturalist profile, so nobody can collect it yet | [`0x554d4054…`](https://explorer-bradbury.genlayer.com/tx/0x554d40540e89db732d01092bce444fd36ba3498c9822c2d310e7eec7de78dd8d) |
+| Submit observation 397236811 to call_0 (GBIF required, no photo condition) |  | sighting_2 ELIGIBLE, 5/5: Vespa velutina, research grade, Romsey 2026-08-18, inside the UK; GBIF occurrence 6519102855 has the same species and date; reward held for the observer | [`0x10a0c97f…`](https://explorer-bradbury.genlayer.com/tx/0x10a0c97f227498920167b008c932dcd491fe7efa8c0c1f680ef8aba3659194e3) |
+| Collect sighting_0 again |  | refused again, 5/5 (same reason) | [`0x6d1ec97a…`](https://explorer-bradbury.genlayer.com/tx/0x6d1ec97ae6ec6e51bc54d7361682cd253b2aa50e4cdae978b19a184731969afb) |
+| Add 0.05 GEN to call_1 (below the 0.1 GEN minimum) | 0.05 GEN | REFUNDED: credited back to the tester, 5/5; totals() owed 0.05 GEN, contract balance matched | [`0x14f8a061…`](https://explorer-bradbury.genlayer.com/tx/0x14f8a0611a70297d4039776e2c9438f711a02ac3540bea97f7b3ab699977e589) |
+| Withdraw |  | 0.05 GEN sent to the tester, 5/5; credit back to 0 | [`0xb6611237…`](https://explorer-bradbury.genlayer.com/tx/0xb6611237ce2168128f10fe99d1b016112ef6542feecedcbcec2d1f465510670b) |
+| Settle sighting_2 after its 10-minute window |  | settled, 5/5: awaiting_wallet, 0.5 GEN held for the observer | [`0x4d9e74bf…`](https://explorer-bradbury.genlayer.com/tx/0x4d9e74bfcb8ea38ff916425062771ade34500a74d23a780d6b0242ead7daecec) |
 
 ## Every transaction
 
